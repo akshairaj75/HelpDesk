@@ -1,4 +1,4 @@
-package com.backend.helpdeskpro.controller;
+package com.backend.helpdeskpro.controller.ticket;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ import com.backend.helpdeskpro.dto.tickets.ticketTag.TicketTagResponseDto;
 import com.backend.helpdeskpro.security.CustomUserPrincipal;
 import com.backend.helpdeskpro.service.TicketTagService;
 
-@RequestMapping("/api/helpdesk/ticket-tags")
+@RequestMapping("/api/helpdesk/ticket/tags")
 @RestController
 public class TicketTagsController {
 

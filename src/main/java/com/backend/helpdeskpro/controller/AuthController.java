@@ -69,11 +69,18 @@ public class AuthController {
 
     }
 
-    @GetMapping("/get-all")
+    // @GetMapping("/fetch-all")
+    // public ResponseEntity<List<UserResponseDto>> getAllUsers() {
+    //     List<UserResponseDto> users = userService.getUsers();
+    //     return ResponseEntity.ok(users);
+    // }
+
+    @GetMapping("/fetch-all")
     public ResponseEntity<List<UserResponseDto>> getAllUsers() {
         List<UserResponseDto> users = userService.getUsers();
         return ResponseEntity.ok(users);
     }
+    
     
 
 

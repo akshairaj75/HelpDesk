@@ -18,6 +18,7 @@ import com.backend.helpdeskpro.entity.SlaPolicy;
 import com.backend.helpdeskpro.entity.Ticket;
 import com.backend.helpdeskpro.entity.TicketAttachment;
 import com.backend.helpdeskpro.entity.User;
+import com.backend.helpdeskpro.enums.UserRole;
 import com.backend.helpdeskpro.repository.CategoryRepository;
 import com.backend.helpdeskpro.repository.DepartmentRepository;
 import com.backend.helpdeskpro.repository.SlaPolicyRepository;
@@ -118,7 +119,6 @@ public class TicketServiceImpl implements TicketService {
                                 } catch (IOException e) {
                                         e.printStackTrace();
                                 }
-
                         }
                 }
 
@@ -128,10 +128,64 @@ public class TicketServiceImpl implements TicketService {
 
         @Override
         public List<TicketResponseDto> getAllTickets(CustomUserPrincipal authUser) {
+
+                if (authUser.getUser().getRole() == UserRole.STAFF) {
+                        List<Ticket> tickets = ticketRepository.findByAssignee(authUser.getUser());
+                        return tickets.stream()
+                                        .map(TicketResponseDto::fromEntity)
+                                        .toList();
+                }
                 List<Ticket> tickets = ticketRepository.findAll();
                 return tickets.stream()
                                 .map(TicketResponseDto::fromEntity)
                                 .toList();
+
+        }
+
+        @Override
+        public TicketResponseDto getTicketById(CustomUserPrincipal authUser, Long ticketId) {
+                Ticket ticket = ticketRepository.findById(ticketId)
+                                .orElseThrow(() -> new RuntimeException("Ticket not found"));
+                return TicketResponseDto.fromEntity(ticket);
+
+        }
+
+        @Override
+        public List<TicketResponseDto> getTicketsByReporterId(CustomUserPrincipal authUser, Long userId) {
+                User user = userRepository.findById(userId)
+                                .orElseThrow(() -> new RuntimeException("User not found"));
+
+                List<Ticket> tickets = ticketRepository.findByReporter(user);
+                return tickets.stream()
+                                .map(TicketResponseDto::fromEntity)
+                                .toList();
+
+        }
+
+        @Override
+        public void addAttachment(CustomUserPrincipal authUser, Long ticketId, List<MultipartFile> files) {
+                Ticket ticket = ticketRepository.findById(ticketId)
+                                .orElseThrow(() -> new RuntimeException("Ticket not found"));
+
+                User currentUser = authUser.getUser();
+
+                if (files != null && !files.isEmpty()) {
+                        for (MultipartFile file : files) {
+                                try {
+                                        String filePath = fileStorageService.storeFile(file, "attachment");
+                                        TicketAttachment attachment = new TicketAttachment();
+                                        attachment.setTicket(ticket);
+                                        attachment.setUploadedBy(currentUser);
+                                        attachment.setFileName(file.getOriginalFilename());
+                                        attachment.setFileUrl(filePath);
+                                        attachment.setFileSizeKb((int) (file.getSize() / 1024));
+                                        attachment.setMimeType(file.getContentType());
+                                        attachmentRepository.save(attachment);
+                                } catch (IOException e) {
+                                        e.printStackTrace();
+                                }
+                        }
+                }
 
         }
 

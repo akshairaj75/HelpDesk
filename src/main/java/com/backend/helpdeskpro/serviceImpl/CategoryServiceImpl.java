@@ -32,7 +32,7 @@ public class CategoryServiceImpl implements CategoryService {
         category.setName(dto.getName());
         category.setDescription(dto.getDescription());
         category.setIconSlug(dto.getIconSlug());
-        category.setSortOrder(dto.getSortOrder());
+        category.setSortOrder(dto.getSortOrder()!= null ? dto.getSortOrder() : 0);
 
         if (dto.getParentId() != null) {
             Category parent = categoryRepository.findById(dto.getParentId())

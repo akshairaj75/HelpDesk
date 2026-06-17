@@ -14,4 +14,10 @@ public interface TicketService {
 
     List<TicketResponseDto> getAllTickets(CustomUserPrincipal authUser);
 
+    TicketResponseDto getTicketById(CustomUserPrincipal authUser, Long ticketId);
+
+    List<TicketResponseDto> getTicketsByReporterId(CustomUserPrincipal authUser, Long userId);
+
+    void addAttachment(CustomUserPrincipal authUser, Long ticketId, List<MultipartFile> files);
+
 }
