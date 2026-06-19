@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,7 +50,26 @@ public class TicketCommentController {
             @RequestPart("files") List<MultipartFile> files) {
                 
             ticketCommentService.addAttachmentToComment(authUser, commentId, files);
-            return ResponseEntity.internalServerError().build(); 
+            return ResponseEntity.ok().build();
     }
+
+    @DeleteMapping("/attachment/{attachmentId}/delete")
+    public ResponseEntity<Void> deleteAttachment(
+            @AuthenticationPrincipal CustomUserPrincipal authUser,
+            @PathVariable Long attachmentId) {
+                ticketCommentService.deleteAttachment(attachmentId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{commentId}/delete")
+    public ResponseEntity<Void> deleteComment(
+            @AuthenticationPrincipal CustomUserPrincipal authUser,
+            @PathVariable Long commentId) {
+                
+                ticketCommentService.deleteComment(commentId);
+        return ResponseEntity.noContent().build();
+    }
+    
+    
 
 }

@@ -8,10 +8,13 @@ import org.springframework.stereotype.Service;
 import com.backend.helpdeskpro.dto.tickets.ticketDto.TicketResponseDto;
 import com.backend.helpdeskpro.entity.Ticket;
 import com.backend.helpdeskpro.entity.TicketStatusHistory;
+import com.backend.helpdeskpro.entity.User;
+import com.backend.helpdeskpro.enums.NotificationType;
 import com.backend.helpdeskpro.enums.TicketStatus;
 import com.backend.helpdeskpro.repository.TicketRepository;
 import com.backend.helpdeskpro.repository.TicketStatusHistoryRepository;
 import com.backend.helpdeskpro.security.CustomUserPrincipal;
+import com.backend.helpdeskpro.service.NotificationService;
 import com.backend.helpdeskpro.service.TicketStatusHistoryService;
 
 @Service
@@ -22,6 +25,10 @@ public class TicketStatusHistoryServiceImpl implements TicketStatusHistoryServic
 
     @Autowired
     TicketRepository ticketRepository;
+
+    @Autowired
+    NotificationService notificationService;
+
 
     @Override
     public TicketResponseDto updateTicketStatus(
@@ -42,7 +49,21 @@ public class TicketStatusHistoryServiceImpl implements TicketStatusHistoryServic
             ticket.setClosedAt(LocalDateTime.now());
         }
 
+
         ticketRepository.save(ticket);
+
+        User receiver = null;
+
+        if (ticket.getAssignee() != null && !ticket.getAssignee().getId().equals(authUser.getUserId())) {
+            receiver = ticket.getAssignee();
+            notificationService.createNotification(
+                    receiver,
+                    ticket,
+                    NotificationType.TICKET_UPDATED,
+                    "New comment added",
+                    authUser.getUser().getFullName() + " commented on ticket " + ticket.getTicketNo(),
+                    "/tickets/" + ticket.getId());
+        }
 
         TicketStatusHistory history = new TicketStatusHistory();
         history.setTicket(ticket);

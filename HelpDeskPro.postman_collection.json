@@ -1,0 +1,1321 @@
+{
+  "info": {
+    "_postman_id": "ba26854d-69bb-4ec4-99df-2debb207d1a8",
+    "name": "HelpDeskPro",
+    "description": "Generated from the Spring Boot controllers in com.backend.helpdeskpro on 2026-06-18. Login or register first to populate authToken, then run protected endpoints with Bearer {{authToken}}.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{authToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "authToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "userId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "departmentId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "categoryId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "slaPolicyId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "ticketId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "commentId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "ticketTagId",
+      "value": "1",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "description": "Public authentication and user-list endpoints under /api/helpdesk/auth.",
+      "item": [
+        {
+          "name": "Register User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "if (body.token) {",
+                  "  pm.collectionVariables.set('authToken', body.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Asha\",\n  \"lastName\": \"Patel\",\n  \"fullName\": \"Asha Patel\",\n  \"email\": \"asha.patel@example.com\",\n  \"password\": \"Password@123\",\n  \"phone\": \"+15550101001\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/helpdesk/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "helpdesk",
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Registers a user and returns an auth token."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"fullName\": \"Asha Patel\",\n  \"email\": \"asha.patel@example.com\",\n  \"token\": \"eyJhbGciOiJIUzI1NiJ9.example\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "if (body.token) {",
+                  "  pm.collectionVariables.set('authToken', body.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"asha.patel@example.com\",\n  \"password\": \"Password@123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/helpdesk/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "helpdesk",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Authenticates a user and stores token in authToken."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"fullName\": \"Asha Patel\",\n  \"email\": \"asha.patel@example.com\",\n  \"token\": \"eyJhbGciOiJIUzI1NiJ9.example\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/helpdesk/auth/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "helpdesk",
+                "auth",
+                "logout"
+              ]
+            },
+            "description": "Returns a simple logout confirmation string."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "Logged out"
+            }
+          ]
+        },
+        {
+          "name": "Current User",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/helpdesk/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "helpdesk",
+                "auth",
+                "me"
+              ]
+            },
+            "description": "Returns the currently authenticated user from the JWT principal."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": 1,\n  \"fullName\": \"Asha Patel\",\n  \"email\": \"asha.patel@example.com\",\n  \"phone\": \"+15550101001\",\n  \"role\": \"END_USER\",\n  \"avatar_url\": null,\n  \"fcm_token\": null,\n  \"departmentId\": 1,\n  \"active\": true\n}"
+            }
+          ]
+        },
+        {
+          "name": "Register Users Bulk",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"firstName\": \"Asha\",\n    \"lastName\": \"Patel\",\n    \"fullName\": \"Asha Patel\",\n    \"email\": \"asha.patel@example.com\",\n    \"password\": \"Password@123\",\n    \"phone\": \"+15550101001\"\n  },\n  {\n    \"firstName\": \"Ravi\",\n    \"lastName\": \"Shah\",\n    \"fullName\": \"Ravi Shah\",\n    \"email\": \"ravi.shah@example.com\",\n    \"password\": \"Password@123\",\n    \"phone\": \"+15550101002\"\n  }\n]"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/helpdesk/auth/register/bulk",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "helpdesk",
+                "auth",
+                "register",
+                "bulk"
+              ]
+            },
+            "description": "Registers multiple users."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"fullName\": \"Asha Patel\",\n    \"email\": \"asha.patel@example.com\",\n    \"token\": \"eyJhbGciOiJIUzI1NiJ9.example1\"\n  },\n  {\n    \"fullName\": \"Ravi Shah\",\n    \"email\": \"ravi.shah@example.com\",\n    \"token\": \"eyJhbGciOiJIUzI1NiJ9.example2\"\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Fetch All Users",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/helpdesk/auth/fetch-all",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "helpdesk",
+                "auth",
+                "fetch-all"
+              ]
+            },
+            "description": "Returns all users."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"id\": 1,\n    \"fullName\": \"Asha Patel\",\n    \"email\": \"asha.patel@example.com\",\n    \"phone\": \"+15550101001\",\n    \"role\": \"END_USER\",\n    \"avatar_url\": null,\n    \"fcm_token\": null,\n    \"departmentId\": 1,\n    \"active\": true\n  }\n]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Category",
+      "description": "Category endpoints under /api/helpdesk/category. These endpoints inherit Bearer {{authToken}}.",
+      "item": [
+        {
+          "name": "Add Category",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Hardware\",\n  \"description\": \"Hardware support requests\",\n  \"defaultAssigneeId\": 2,\n  \"isActive\": true,\n  \"parentId\": null,\n  \"iconSlug\": \"cpu\",\n  \"sortOrder\": 10\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/helpdesk/category/add-category",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "helpdesk",
+                "category",
+                "add-category"
+              ]
+            },
+            "description": "Creates a category using CategoryCreateDto."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"categoryId\": 1,\n  \"parentCategory\": null,\n  \"name\": \"Hardware\",\n  \"description\": \"Hardware support requests\",\n  \"isActive\": true\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get All Categories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/helpdesk/category/get-all-category",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "helpdesk",
+                "category",
+                "get-all-category"
+              ]
+            },
+            "description": "Returns all categories. The controller mapping omits the leading slash, but resolves to this path."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"categoryId\": 1,\n    \"parentCategory\": null,\n    \"name\": \"Hardware\",\n    \"description\": \"Hardware support requests\",\n    \"isActive\": true\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Add Categories Bulk",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"name\": \"Hardware\",\n    \"description\": \"Hardware support requests\",\n    \"defaultAssigneeId\": 2,\n    \"isActive\": true,\n    \"parentId\": null,\n    \"iconSlug\": \"cpu\",\n    \"sortOrder\": 10\n  },\n  {\n    \"name\": \"Software\",\n    \"description\": \"Application support requests\",\n    \"defaultAssigneeId\": 3,\n    \"isActive\": true,\n    \"parentId\": null,\n    \"iconSlug\": \"app-window\",\n    \"sortOrder\": 20\n  }\n]"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/helpdesk/category/add-category/bulk",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "helpdesk",
+                "category",
+                "add-category",
+                "bulk"
+              ]
+            },
+            "description": "Creates multiple categories."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"categoryId\": 1,\n    \"parentCategory\": null,\n    \"name\": \"Hardware\",\n    \"description\": \"Hardware support requests\",\n    \"isActive\": true\n  },\n  {\n    \"categoryId\": 2,\n    \"parentCategory\": null,\n    \"name\": \"Software\",\n    \"description\": \"Application support requests\",\n    \"isActive\": true\n  }\n]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Department",
+      "description": "Department endpoints under /api/helpdesk/department. These endpoints inherit Bearer {{authToken}}.",
+      "item": [
+        {
+          "name": "Add Department",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"IT Support\",\n  \"description\": \"Internal technical support\",\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/helpdesk/department/add-department",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "helpdesk",
+                "department",
+                "add-department"
+              ]
+            },
+            "description": "Creates a department using DepartmentCreateDto."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"departmentId\": 1,\n  \"name\": \"IT Support\",\n  \"description\": \"Internal technical support\",\n  \"managerId\": 2,\n  \"isActive\": true\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get All Departments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/helpdesk/department/get-all-department",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "helpdesk",
+                "department",
+                "get-all-department"
+              ]
+            },
+            "description": "Returns all departments."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"departmentId\": 1,\n    \"name\": \"IT Support\",\n    \"description\": \"Internal technical support\",\n    \"managerId\": 2,\n    \"isActive\": true\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Get Department By Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/helpdesk/department/get-department/{{departmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "helpdesk",
+                "department",
+                "get-department",
+                "{{departmentId}}"
+              ]
+            },
+            "description": "Returns one department by departmentId."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"departmentId\": 1,\n  \"name\": \"IT Support\",\n  \"description\": \"Internal technical support\",\n  \"managerId\": 2,\n  \"isActive\": true\n}"
+            }
+          ]
+        },
+        {
+          "name": "Add Departments Bulk",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"name\": \"IT Support\",\n    \"description\": \"Internal technical support\",\n    \"isActive\": true\n  },\n  {\n    \"name\": \"Facilities\",\n    \"description\": \"Office facilities support\",\n    \"isActive\": true\n  }\n]"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/helpdesk/department/add-department/bulk",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "helpdesk",
+                "department",
+                "add-department",
+                "bulk"
+              ]
+            },
+            "description": "Creates multiple departments."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"departmentId\": 1,\n    \"name\": \"IT Support\",\n    \"description\": \"Internal technical support\",\n    \"managerId\": 2,\n    \"isActive\": true\n  },\n  {\n    \"departmentId\": 2,\n    \"name\": \"Facilities\",\n    \"description\": \"Office facilities support\",\n    \"managerId\": 3,\n    \"isActive\": true\n  }\n]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "SLA Policy",
+      "description": "SLA policy endpoints under /api/helpdesk/sla-policy. These endpoints inherit Bearer {{authToken}}.",
+      "item": [
+        {
+          "name": "Add SLA Policy",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"High Priority 8 Hour SLA\",\n  \"priorityLevel\": \"HIGH\",\n  \"description\": \"Respond within 30 minutes and resolve within 8 hours.\",\n  \"escalateEnabled\": true,\n  \"escalationMinutes\": 120,\n  \"responseMinutes\": 30,\n  \"resolutionMinutes\": 480,\n  \"active\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/helpdesk/sla-policy/add-sla",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "helpdesk",
+                "sla-policy",
+                "add-sla"
+              ]
+            },
+            "description": "Creates an SLA policy. Priority values: LOW, MEDIUM, HIGH, CRITICAL."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"slaPolicyId\": 1,\n  \"name\": \"High Priority 8 Hour SLA\",\n  \"responseMinutes\": 30,\n  \"resolutionMinutes\": 480,\n  \"isActive\": true,\n  \"createdAt\": \"2026-06-18T10:00:00\",\n  \"updatedAt\": \"2026-06-18T10:00:00\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get All SLA Policies",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/helpdesk/sla-policy/get-all-sla",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "helpdesk",
+                "sla-policy",
+                "get-all-sla"
+              ]
+            },
+            "description": "Returns all SLA policies."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"slaPolicyId\": 1,\n    \"name\": \"High Priority 8 Hour SLA\",\n    \"responseMinutes\": 30,\n    \"resolutionMinutes\": 480,\n    \"isActive\": true,\n    \"createdAt\": \"2026-06-18T10:00:00\",\n    \"updatedAt\": \"2026-06-18T10:00:00\"\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Add SLA Policies Bulk",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"name\": \"Medium Priority 24 Hour SLA\",\n    \"priorityLevel\": \"MEDIUM\",\n    \"description\": \"Respond within 2 hours and resolve within 24 hours.\",\n    \"escalateEnabled\": true,\n    \"escalationMinutes\": 360,\n    \"responseMinutes\": 120,\n    \"resolutionMinutes\": 1440,\n    \"active\": true\n  },\n  {\n    \"name\": \"Critical Priority 4 Hour SLA\",\n    \"priorityLevel\": \"CRITICAL\",\n    \"description\": \"Respond within 15 minutes and resolve within 4 hours.\",\n    \"escalateEnabled\": true,\n    \"escalationMinutes\": 60,\n    \"responseMinutes\": 15,\n    \"resolutionMinutes\": 240,\n    \"active\": true\n  }\n]"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/helpdesk/sla-policy/add-sla/bulk",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "helpdesk",
+                "sla-policy",
+                "add-sla",
+                "bulk"
+              ]
+            },
+            "description": "Creates multiple SLA policies."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"slaPolicyId\": 1,\n    \"name\": \"Medium Priority 24 Hour SLA\",\n    \"responseMinutes\": 120,\n    \"resolutionMinutes\": 1440,\n    \"isActive\": true,\n    \"createdAt\": \"2026-06-18T10:00:00\",\n    \"updatedAt\": \"2026-06-18T10:00:00\"\n  },\n  {\n    \"slaPolicyId\": 2,\n    \"name\": \"Critical Priority 4 Hour SLA\",\n    \"responseMinutes\": 15,\n    \"resolutionMinutes\": 240,\n    \"isActive\": true,\n    \"createdAt\": \"2026-06-18T10:01:00\",\n    \"updatedAt\": \"2026-06-18T10:01:00\"\n  }\n]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Ticket Tags",
+      "description": "Ticket tag endpoints under /api/helpdesk/ticket/tags. These endpoints inherit Bearer {{authToken}}.",
+      "item": [
+        {
+          "name": "Add Ticket Tag",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"VPN\",\n  \"colorHex\": \"#2563EB\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/helpdesk/ticket/tags/add-ticket-tag",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "helpdesk",
+                "ticket",
+                "tags",
+                "add-ticket-tag"
+              ]
+            },
+            "description": "Creates a ticket tag."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": 1,\n  \"name\": \"VPN\",\n  \"colorHex\": \"#2563EB\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get All Ticket Tags",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/helpdesk/ticket/tags/get-all-ticket-tag",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "helpdesk",
+                "ticket",
+                "tags",
+                "get-all-ticket-tag"
+              ]
+            },
+            "description": "Returns all ticket tags."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"id\": 1,\n    \"name\": \"VPN\",\n    \"colorHex\": \"#2563EB\"\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Add Ticket Tags Bulk",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"name\": \"VPN\",\n    \"colorHex\": \"#2563EB\"\n  },\n  {\n    \"name\": \"Printer\",\n    \"colorHex\": \"#16A34A\"\n  }\n]"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/helpdesk/ticket/tags/add-ticket-tag/bulk",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "helpdesk",
+                "ticket",
+                "tags",
+                "add-ticket-tag",
+                "bulk"
+              ]
+            },
+            "description": "Creates multiple ticket tags."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"id\": 1,\n    \"name\": \"VPN\",\n    \"colorHex\": \"#2563EB\"\n  },\n  {\n    \"id\": 2,\n    \"name\": \"Printer\",\n    \"colorHex\": \"#16A34A\"\n  }\n]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Tickets",
+      "description": "Ticket endpoints under /api/helpdesk/tickets. These endpoints inherit Bearer {{authToken}}.",
+      "item": [
+        {
+          "name": "Create Ticket",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "data",
+                  "value": "{\n  \"reporterId\": 1,\n  \"categoryId\": 1,\n  \"departmentId\": 1,\n  \"assigneeId\": 2,\n  \"slaPolicyId\": 1,\n  \"subject\": \"Unable to connect to VPN\",\n  \"description\": \"The VPN client fails with an authentication error.\",\n  \"priority\": \"HIGH\",\n  \"channel\": \"WEB\",\n  \"tagIds\": [1, 2]\n}",
+                  "type": "text",
+                  "contentType": "application/json"
+                },
+                {
+                  "key": "files",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/helpdesk/tickets/create",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "helpdesk",
+                "tickets",
+                "create"
+              ]
+            },
+            "description": "Creates a ticket. Multipart part data is TicketCreateDto JSON; files is optional. Priority values: LOW, MEDIUM, HIGH, CRITICAL. Channel values: WEB, MOBILE, EMAIL, PHONE, WALK_IN."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"ticketId\": 1,\n  \"ticketNo\": \"TCK-20260618-0001\",\n  \"reporterId\": 1,\n  \"assigneeId\": 2,\n  \"category\": {\n    \"categoryId\": 1,\n    \"parentCategory\": null,\n    \"name\": \"Hardware\",\n    \"description\": \"Hardware support requests\",\n    \"isActive\": true\n  },\n  \"departmentId\": 1,\n  \"slaPolicyId\": 1,\n  \"subject\": \"Unable to connect to VPN\",\n  \"description\": \"The VPN client fails with an authentication error.\",\n  \"status\": \"OPEN\",\n  \"priority\": \"HIGH\",\n  \"channel\": \"WEB\",\n  \"slaDueAt\": \"2026-06-18T18:00:00\",\n  \"slaBreached\": false,\n  \"firstResponseAt\": null,\n  \"resolvedAt\": null,\n  \"closedAt\": null,\n  \"attachments\": [\n    {\n      \"fileName\": \"vpn-error.png\",\n      \"fileUrl\": \"/uploads/tickets/vpn-error.png\",\n      \"mimeType\": \"image/png\",\n      \"fileSizeKb\": 248\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get All Tickets",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/helpdesk/tickets/get-all-ticket",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "helpdesk",
+                "tickets",
+                "get-all-ticket"
+              ]
+            },
+            "description": "Returns tickets visible to the authenticated user."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"ticketId\": 1,\n    \"ticketNo\": \"TCK-20260618-0001\",\n    \"reporterId\": 1,\n    \"assigneeId\": 2,\n    \"category\": {\n      \"categoryId\": 1,\n      \"parentCategory\": null,\n      \"name\": \"Hardware\",\n      \"description\": \"Hardware support requests\",\n      \"isActive\": true\n    },\n    \"departmentId\": 1,\n    \"slaPolicyId\": 1,\n    \"subject\": \"Unable to connect to VPN\",\n    \"description\": \"The VPN client fails with an authentication error.\",\n    \"status\": \"OPEN\",\n    \"priority\": \"HIGH\",\n    \"channel\": \"WEB\",\n    \"slaDueAt\": \"2026-06-18T18:00:00\",\n    \"slaBreached\": false,\n    \"firstResponseAt\": null,\n    \"resolvedAt\": null,\n    \"closedAt\": null,\n    \"attachments\": []\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Get Ticket By Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/helpdesk/tickets/get-ticket/{{ticketId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "helpdesk",
+                "tickets",
+                "get-ticket",
+                "{{ticketId}}"
+              ]
+            },
+            "description": "Returns one ticket by ticketId."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"ticketId\": 1,\n  \"ticketNo\": \"TCK-20260618-0001\",\n  \"reporterId\": 1,\n  \"assigneeId\": 2,\n  \"category\": {\n    \"categoryId\": 1,\n    \"parentCategory\": null,\n    \"name\": \"Hardware\",\n    \"description\": \"Hardware support requests\",\n    \"isActive\": true\n  },\n  \"departmentId\": 1,\n  \"slaPolicyId\": 1,\n  \"subject\": \"Unable to connect to VPN\",\n  \"description\": \"The VPN client fails with an authentication error.\",\n  \"status\": \"OPEN\",\n  \"priority\": \"HIGH\",\n  \"channel\": \"WEB\",\n  \"slaDueAt\": \"2026-06-18T18:00:00\",\n  \"slaBreached\": false,\n  \"firstResponseAt\": null,\n  \"resolvedAt\": null,\n  \"closedAt\": null,\n  \"attachments\": []\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Tickets By Reporter",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/helpdesk/tickets/get-by-reporter/{{userId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "helpdesk",
+                "tickets",
+                "get-by-reporter",
+                "{{userId}}"
+              ]
+            },
+            "description": "Returns tickets for the reporter userId."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"ticketId\": 1,\n    \"ticketNo\": \"TCK-20260618-0001\",\n    \"reporterId\": 1,\n    \"assigneeId\": 2,\n    \"category\": {\n      \"categoryId\": 1,\n      \"parentCategory\": null,\n      \"name\": \"Hardware\",\n      \"description\": \"Hardware support requests\",\n      \"isActive\": true\n    },\n    \"departmentId\": 1,\n    \"slaPolicyId\": 1,\n    \"subject\": \"Unable to connect to VPN\",\n    \"description\": \"The VPN client fails with an authentication error.\",\n    \"status\": \"OPEN\",\n    \"priority\": \"HIGH\",\n    \"channel\": \"WEB\",\n    \"slaDueAt\": \"2026-06-18T18:00:00\",\n    \"slaBreached\": false,\n    \"firstResponseAt\": null,\n    \"resolvedAt\": null,\n    \"closedAt\": null,\n    \"attachments\": []\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Get Ticket Attachments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/helpdesk/tickets/{{ticketId}}/get-attachments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "helpdesk",
+                "tickets",
+                "{{ticketId}}",
+                "get-attachments"
+              ]
+            },
+            "description": "Returns attachments for one ticket."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"fileName\": \"vpn-error.png\",\n    \"fileUrl\": \"/uploads/tickets/vpn-error.png\",\n    \"mimeType\": \"image/png\",\n    \"fileSizeKb\": 248\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Add Ticket Attachment",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "files",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/helpdesk/tickets/{{ticketId}}/add-attachment",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "helpdesk",
+                "tickets",
+                "{{ticketId}}",
+                "add-attachment"
+              ]
+            },
+            "description": "Uploads one or more files to an existing ticket. Add additional form-data rows named files for multiple files."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"ticketId\": 1,\n  \"ticketNo\": \"TCK-20260618-0001\",\n  \"reporterId\": 1,\n  \"assigneeId\": 2,\n  \"category\": {\n    \"categoryId\": 1,\n    \"parentCategory\": null,\n    \"name\": \"Hardware\",\n    \"description\": \"Hardware support requests\",\n    \"isActive\": true\n  },\n  \"departmentId\": 1,\n  \"slaPolicyId\": 1,\n  \"subject\": \"Unable to connect to VPN\",\n  \"description\": \"The VPN client fails with an authentication error.\",\n  \"status\": \"OPEN\",\n  \"priority\": \"HIGH\",\n  \"channel\": \"WEB\",\n  \"slaDueAt\": \"2026-06-18T18:00:00\",\n  \"slaBreached\": false,\n  \"firstResponseAt\": null,\n  \"resolvedAt\": null,\n  \"closedAt\": null,\n  \"attachments\": [\n    {\n      \"fileName\": \"vpn-error.png\",\n      \"fileUrl\": \"/uploads/tickets/vpn-error.png\",\n      \"mimeType\": \"image/png\",\n      \"fileSizeKb\": 248\n    }\n  ]\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Ticket Comments",
+      "description": "Ticket comment endpoints under /api/helpdesk/tickets/comment. These endpoints inherit Bearer {{authToken}}.",
+      "item": [
+        {
+          "name": "Add Comment",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "data",
+                  "value": "{\n  \"ticketId\": 1,\n  \"authorId\": 2,\n  \"body\": \"I have reset the VPN profile. Please try again.\",\n  \"internal\": false\n}",
+                  "type": "text",
+                  "contentType": "application/json"
+                },
+                {
+                  "key": "files",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/helpdesk/tickets/comment/add-comment",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "helpdesk",
+                "tickets",
+                "comment",
+                "add-comment"
+              ]
+            },
+            "description": "Adds a comment to a ticket. Multipart part data is TicketCommentRegisterDto JSON; files is optional."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"ticketCommendId\": 1,\n  \"ticketId\": 1,\n  \"authorId\": 2,\n  \"body\": \"I have reset the VPN profile. Please try again.\",\n  \"internal\": false\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Comments By Ticket",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/helpdesk/tickets/comment/{{ticketId}}/get-comments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "helpdesk",
+                "tickets",
+                "comment",
+                "{{ticketId}}",
+                "get-comments"
+              ]
+            },
+            "description": "Returns comments for one ticket."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"commentId\": 1,\n    \"author\": {\n      \"id\": 2,\n      \"fullName\": \"Ravi Shah\",\n      \"email\": \"ravi.shah@example.com\",\n      \"phone\": \"+15550101002\",\n      \"role\": \"AGENT\",\n      \"avatar_url\": null,\n      \"fcm_token\": null,\n      \"departmentId\": 1,\n      \"active\": true\n    },\n    \"body\": \"I have reset the VPN profile. Please try again.\",\n    \"isInternal\": false,\n    \"attachments\": [\n      {\n        \"fileName\": \"vpn-steps.pdf\",\n        \"fileUrl\": \"/uploads/comments/vpn-steps.pdf\",\n        \"mimeType\": \"application/pdf\",\n        \"fileSizeKb\": 92\n      }\n    ]\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Add Comment Attachment",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "files",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/helpdesk/tickets/comment/{{commentId}}/add-attachment",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "helpdesk",
+                "tickets",
+                "comment",
+                "{{commentId}}",
+                "add-attachment"
+              ]
+            },
+            "description": "Uploads one or more files to an existing comment. The controller returns 200 OK with an empty body."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "header": [],
+              "body": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Ticket Status",
+      "description": "Ticket status endpoint under /api/helpdesk/ticket/status. This endpoint inherits Bearer {{authToken}}.",
+      "item": [
+        {
+          "name": "Update Ticket Status",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/helpdesk/ticket/status/{{ticketId}}?status=IN_PROGRESS&reason=Agent%20started%20working%20on%20the%20ticket",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "helpdesk",
+                "ticket",
+                "status",
+                "{{ticketId}}"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "IN_PROGRESS",
+                  "description": "Allowed values: OPEN, IN_PROGRESS, ON_HOLD, RESOLVED, CLOSED, CANCELLED."
+                },
+                {
+                  "key": "reason",
+                  "value": "Agent started working on the ticket",
+                  "description": "Optional status-change reason."
+                }
+              ]
+            },
+            "description": "Updates ticket status using request parameters."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"ticketId\": 1,\n  \"ticketNo\": \"TCK-20260618-0001\",\n  \"reporterId\": 1,\n  \"assigneeId\": 2,\n  \"category\": {\n    \"categoryId\": 1,\n    \"parentCategory\": null,\n    \"name\": \"Hardware\",\n    \"description\": \"Hardware support requests\",\n    \"isActive\": true\n  },\n  \"departmentId\": 1,\n  \"slaPolicyId\": 1,\n  \"subject\": \"Unable to connect to VPN\",\n  \"description\": \"The VPN client fails with an authentication error.\",\n  \"status\": \"IN_PROGRESS\",\n  \"priority\": \"HIGH\",\n  \"channel\": \"WEB\",\n  \"slaDueAt\": \"2026-06-18T18:00:00\",\n  \"slaBreached\": false,\n  \"firstResponseAt\": \"2026-06-18T10:15:00\",\n  \"resolvedAt\": null,\n  \"closedAt\": null,\n  \"attachments\": []\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

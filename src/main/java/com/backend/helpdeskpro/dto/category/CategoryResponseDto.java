@@ -3,7 +3,7 @@ package com.backend.helpdeskpro.dto.category;
 public class CategoryResponseDto {
 
     private Integer categoryId;
-    private Integer parentId;
+    private CategoryResponseDto parentCategory;
     private String name;
     private String description;
     private Boolean isActive;
@@ -15,12 +15,14 @@ public class CategoryResponseDto {
     public void setCategoryId(Integer categoryId) {
         this.categoryId = categoryId;
     }
-        public Integer getParentId() {
-        return parentId;
-    }
 
-    public void setParentId(Integer parentId) {
-        this.parentId = parentId;
+
+    public CategoryResponseDto getParentCategory() {
+        return parentCategory;
+    }
+            
+    public void setParentCategory(CategoryResponseDto parentCategory) {
+        this.parentCategory = parentCategory;
     }
 
 
@@ -51,9 +53,11 @@ public class CategoryResponseDto {
     public static CategoryResponseDto fromEntity(com.backend.helpdeskpro.entity.Category category) {
         CategoryResponseDto dto = new CategoryResponseDto();
         dto.setCategoryId(category.getId());
+
         if (category.getParent() != null) {
-            dto.setParentId(category.getParent().getId());
+            dto.setParentCategory(CategoryResponseDto.fromEntity(category.getParent()));
         }
+        
         dto.setName(category.getName());
         dto.setDescription(category.getDescription());
         dto.setIsActive(category.getActive());

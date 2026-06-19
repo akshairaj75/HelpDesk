@@ -1,6 +1,7 @@
 package com.backend.helpdeskpro.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -23,6 +24,9 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         @Autowired
         private JwtService jwtService;
+
+        @Value("${file.angular-url}")
+        private String angularUrl;
 
         @Override
         public void onAuthenticationSuccess(
@@ -54,7 +58,6 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 String token = jwtService.generateToken(user);
 
                 response.sendRedirect(
-                                "http://localhost:4200/oauth-success?token="
-                                                + token);
+                                "http://localhost:4200/oauth-success?token=" + token);
         }
 }

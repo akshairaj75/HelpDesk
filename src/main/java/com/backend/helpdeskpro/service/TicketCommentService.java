@@ -17,5 +17,8 @@ public interface TicketCommentService {
 
     void addAttachmentToComment(CustomUserPrincipal authUser, Long commentId, List<MultipartFile> files);
 
+    void deleteAttachment(Long attachmentId);
+
+    void deleteComment(Long commentId);
 
 }

@@ -3,6 +3,7 @@ package com.backend.helpdeskpro.dto.tickets.ticketDto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.backend.helpdeskpro.dto.category.CategoryResponseDto;
 import com.backend.helpdeskpro.dto.tickets.ticketAttachment.TicketAttachmentDto;
 import com.backend.helpdeskpro.entity.Ticket;
 import com.backend.helpdeskpro.enums.PriorityLevel;
@@ -15,7 +16,8 @@ public class TicketResponseDto {
     private String ticketNo;
     private Long reporterId;
     private Long assigneeId;
-    private Long categoryId;
+    // private Long categoryId;
+    private CategoryResponseDto category;
     private Long departmentId;
     private Long slaPolicyId;
     private String subject;
@@ -70,12 +72,12 @@ public class TicketResponseDto {
         this.assigneeId = assigneeId;
     }
 
-    public Long getCategoryId() {
-        return categoryId;
+    public CategoryResponseDto getCategory() {
+        return category;
     }
 
-    public void setCategoryId(Long categoryId) {
-        this.categoryId = categoryId;
+    public void setCategory(CategoryResponseDto category) {
+        this.category = category;
     }
 
     public Long getDepartmentId() {
@@ -180,7 +182,9 @@ public class TicketResponseDto {
         dto.setTicketNo(ticket.getTicketNo());
         dto.setReporterId(ticket.getReporter() != null ? ticket.getReporter().getId() : null);
         dto.setAssigneeId(ticket.getAssignee() != null ? ticket.getAssignee().getId() : null);
-        dto.setCategoryId(ticket.getCategory() != null ? ticket.getCategory().getId().longValue() : null);
+        // dto.setCategoryId(ticket.getCategory() != null ? ticket.getCategory().getId().longValue() : null);
+        dto.setCategory(ticket.getCategory() != null ? CategoryResponseDto.fromEntity(ticket.getCategory()) : null);
+
         dto.setDepartmentId(
                 ticket.getDepartment() != null ? ticket.getDepartment().getDepartmentId().longValue() : null);
         dto.setSlaPolicyId(ticket.getSlaPolicy() != null ? ticket.getSlaPolicy().getId().longValue() : null);

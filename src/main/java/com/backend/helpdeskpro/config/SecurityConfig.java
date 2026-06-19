@@ -80,6 +80,9 @@ public class SecurityConfig {
                                 "/api/oauth2/**",
                                 "/uploads/**",
                                 "/login/oauth2/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/v3/api-docs/**",
                                 "/ws/**")
                         .permitAll()
                         .requestMatchers("/api/chat/**")

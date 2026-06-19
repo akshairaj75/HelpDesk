@@ -14,7 +14,7 @@ import com.backend.helpdeskpro.enums.TicketStatus;
 import com.backend.helpdeskpro.security.CustomUserPrincipal;
 import com.backend.helpdeskpro.service.TicketStatusHistoryService;
 
-@RequestMapping("/api/helpdesk/ticket/status")
+@RequestMapping("/api/helpdesk/tickets/status")
 @RestController
 public class TicketStatusHistoryController {
 

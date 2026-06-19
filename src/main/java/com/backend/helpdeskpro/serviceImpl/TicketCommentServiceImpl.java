@@ -13,10 +13,12 @@ import com.backend.helpdeskpro.entity.Ticket;
 import com.backend.helpdeskpro.entity.TicketAttachment;
 import com.backend.helpdeskpro.entity.TicketComment;
 import com.backend.helpdeskpro.entity.User;
+import com.backend.helpdeskpro.enums.NotificationType;
 import com.backend.helpdeskpro.repository.TicketAttachmentRepository;
 import com.backend.helpdeskpro.repository.TicketCommentRepository;
 import com.backend.helpdeskpro.repository.TicketRepository;
 import com.backend.helpdeskpro.security.CustomUserPrincipal;
+import com.backend.helpdeskpro.service.NotificationService;
 import com.backend.helpdeskpro.service.TicketCommentService;
 
 @Service
@@ -30,6 +32,9 @@ public class TicketCommentServiceImpl implements TicketCommentService {
 
     @Autowired
     FileStorageService fileStorageService;
+
+    @Autowired
+    NotificationService notificationService;
 
     @Autowired
     TicketAttachmentRepository attachmentRepository;
@@ -49,6 +54,18 @@ public class TicketCommentServiceImpl implements TicketCommentService {
         comment.setInternal(dto.getInternal());
 
         TicketComment savedComment = ticketCommentRepository.save(comment);
+
+        User receiver = null;
+        if (ticket.getAssignee() != null && !ticket.getAssignee().getId().equals(authUser.getUserId())) {
+            receiver = ticket.getAssignee();
+            notificationService.createNotification(
+                    receiver,
+                    ticket,
+                    NotificationType.NEW_COMMENT,
+                    "New comment added",
+                    author.getFullName() + " commented on ticket " + ticket.getTicketNo(),
+                    "/tickets/" + ticket.getId());
+        }
 
         if (files != null && !files.isEmpty()) {
             for (MultipartFile file : files) {
@@ -79,8 +96,8 @@ public class TicketCommentServiceImpl implements TicketCommentService {
         return comments.stream()
                 .map(TicketCommentResponseDto::fromEntity)
                 .toList();
-                
-     }
+
+    }
 
     @Override
     public void addAttachmentToComment(CustomUserPrincipal authUser, Long commentId, List<MultipartFile> files) {
@@ -107,10 +124,28 @@ public class TicketCommentServiceImpl implements TicketCommentService {
                 }
             }
         }
-        return ;
-        
+        return;
+
     }
 
+    @Override
+    public void deleteAttachment(Long attachmentId) {
+        TicketAttachment attachment = attachmentRepository.findById(attachmentId)
+                .orElseThrow(() -> new RuntimeException("Attachment not found"));
+        attachmentRepository.delete(attachment);
+        fileStorageService.deleteFile(attachment.getFileUrl());
+    }
 
+    @Override
+    public void deleteComment(Long commentId) {
+        TicketComment comment = ticketCommentRepository.findById(commentId)
+                .orElseThrow(() -> new RuntimeException("Comment not found"));
 
+        List<TicketAttachment> attachments = attachmentRepository.findByComment(comment);
+        for (TicketAttachment attachment : attachments) {
+            fileStorageService.deleteFile(attachment.getFileUrl());
+            attachmentRepository.delete(attachment);
+        }
+        ticketCommentRepository.delete(comment);
+    }
 }

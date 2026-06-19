@@ -18,6 +18,7 @@ import com.backend.helpdeskpro.entity.SlaPolicy;
 import com.backend.helpdeskpro.entity.Ticket;
 import com.backend.helpdeskpro.entity.TicketAttachment;
 import com.backend.helpdeskpro.entity.User;
+import com.backend.helpdeskpro.enums.NotificationType;
 import com.backend.helpdeskpro.enums.UserRole;
 import com.backend.helpdeskpro.repository.CategoryRepository;
 import com.backend.helpdeskpro.repository.DepartmentRepository;
@@ -26,6 +27,7 @@ import com.backend.helpdeskpro.repository.TicketAttachmentRepository;
 import com.backend.helpdeskpro.repository.TicketRepository;
 import com.backend.helpdeskpro.repository.UserRepository;
 import com.backend.helpdeskpro.security.CustomUserPrincipal;
+import com.backend.helpdeskpro.service.NotificationService;
 import com.backend.helpdeskpro.service.TicketService;
 
 import jakarta.transaction.Transactional;
@@ -53,6 +55,9 @@ public class TicketServiceImpl implements TicketService {
 
         @Autowired
         TicketAttachmentRepository attachmentRepository;
+
+        @Autowired
+        NotificationService notificationService;
 
         private String generateTicketNumber() {
 
@@ -99,6 +104,16 @@ public class TicketServiceImpl implements TicketService {
                 ticket.setTicketNo(generateTicketNumber());
 
                 Ticket savedTicket = ticketRepository.save(ticket);
+
+                if (savedTicket.getAssignee() != null) {
+                        notificationService.createNotification(
+                                        savedTicket.getAssignee(),
+                                        savedTicket,
+                                        NotificationType.TICKET_ASSIGNED,
+                                        "Ticket Assigned",
+                                        "You have been assigned a new ticket",
+                                        "/tickets/" + savedTicket.getId());
+                }
 
                 if (files != null && !files.isEmpty()) {
                         for (MultipartFile file : files) {
