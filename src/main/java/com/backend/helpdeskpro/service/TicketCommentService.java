@@ -11,7 +11,7 @@ import com.backend.helpdeskpro.security.CustomUserPrincipal;
 public interface TicketCommentService {
 
     TicketCommentRegisterDto addComment(CustomUserPrincipal authUser, TicketCommentRegisterDto dto,
-            List<MultipartFile> files);
+            List<MultipartFile> files, Long ticketId);
 
     List<TicketCommentResponseDto> getCommentsByTicketId(CustomUserPrincipal authUser, Long ticketId);
 

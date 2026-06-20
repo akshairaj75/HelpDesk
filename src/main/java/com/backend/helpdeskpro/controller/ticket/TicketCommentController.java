@@ -26,12 +26,13 @@ public class TicketCommentController {
     @Autowired
     TicketCommentService ticketCommentService;
 
-    @PostMapping("/add-comment")
+    @PostMapping("/{ticketId}/add-comment")
     public ResponseEntity<TicketCommentRegisterDto> addComment(
             @AuthenticationPrincipal CustomUserPrincipal authUser,
+            @PathVariable Long ticketId,
             @RequestPart("data") TicketCommentRegisterDto dto,
             @RequestPart(value = "files", required = false) List<MultipartFile> files) {
-        TicketCommentRegisterDto resp = ticketCommentService.addComment(authUser, dto, files);
+        TicketCommentRegisterDto resp = ticketCommentService.addComment(authUser, dto, files, ticketId);
         return ResponseEntity.ok(resp);
     }
 

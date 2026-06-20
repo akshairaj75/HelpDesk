@@ -1,21 +1,24 @@
 package com.backend.helpdeskpro.dto.audit;
 
+import com.backend.helpdeskpro.dto.auth.UserResponseDto;
 import com.backend.helpdeskpro.entity.AuditLog;
+import com.backend.helpdeskpro.enums.AuditAction;
 
 public class AuditLogResponseDto {
-    private Long id;
+    private Long auditLogId;
     private String entityType;
     private Long entityId;
-    private String performedBy;
-    private String action;
+    private UserResponseDto performedBy;
+    private String payload;
+    private AuditAction action;
     private String ipAdress;
 
-    public Long getId() {
-        return id;
+    public Long getAuditLogId() {
+        return auditLogId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setAuditLogId(Long auditLogId) {
+        this.auditLogId = auditLogId;
     }
 
     public String getEntityType() {
@@ -34,19 +37,27 @@ public class AuditLogResponseDto {
         this.entityId = entityId;
     }
 
-    public String getPerformedBy() {
+    public UserResponseDto getPerformedBy() {
         return performedBy;
     }
 
-    public void setPerformedBy(String performedBy) {
+    public void setPerformedBy(UserResponseDto performedBy) {
         this.performedBy = performedBy;
     }
 
-    public String getAction() {
+    public String getPayload() {
+        return payload;
+    }
+
+    public void setPayload(String payload) {
+        this.payload = payload;
+    }
+
+    public AuditAction getAction() {
         return action;
     }
 
-    public void setAction(String action) {
+    public void setAction(AuditAction action) {
         this.action = action;
     }
 
@@ -60,12 +71,15 @@ public class AuditLogResponseDto {
 
     public static AuditLogResponseDto fromEntity(AuditLog auditLog) {
         AuditLogResponseDto dto = new AuditLogResponseDto();
-        dto.setId(auditLog.getId());
+        dto.setAuditLogId(auditLog.getId());
         dto.setEntityType(auditLog.getEntityType());
         dto.setEntityId(auditLog.getEntityId());
-        // dto.setPerformedBy(auditLog.getPerformedBy());
+        if (auditLog.getActor() != null) {
+            dto.setPerformedBy(UserResponseDto.fromEntity(auditLog.getActor()));
+        }
+        dto.setPayload(auditLog.getPayload());
         dto.setAction(auditLog.getAction());
-        // dto.setIpAdress(auditLog.getIpAdress());
+        dto.setIpAdress(auditLog.getIpAddress());
         return dto;
     }
 

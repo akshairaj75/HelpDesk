@@ -3,6 +3,8 @@ package com.backend.helpdeskpro.entity;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.backend.helpdeskpro.enums.AuditAction;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -30,7 +32,7 @@ public class AuditLog {
         private User actor;
 
         @Column(name = "action", nullable = false, length = 50)
-        private String action;
+        private AuditAction action;
 
         @Column(name = "payload", columnDefinition = "JSON")
         private String payload;
@@ -77,11 +79,11 @@ public class AuditLog {
                 this.actor = actor;
         }
 
-        public String getAction() {
+        public AuditAction getAction() {
                 return action;
         }
 
-        public void setAction(String action) {
+        public void setAction(AuditAction action) {
                 this.action = action;
         }
 

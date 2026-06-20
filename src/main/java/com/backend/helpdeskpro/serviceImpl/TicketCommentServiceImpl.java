@@ -21,6 +21,8 @@ import com.backend.helpdeskpro.security.CustomUserPrincipal;
 import com.backend.helpdeskpro.service.NotificationService;
 import com.backend.helpdeskpro.service.TicketCommentService;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class TicketCommentServiceImpl implements TicketCommentService {
 
@@ -40,9 +42,10 @@ public class TicketCommentServiceImpl implements TicketCommentService {
     TicketAttachmentRepository attachmentRepository;
 
     @Override
+    @Transactional
     public TicketCommentRegisterDto addComment(CustomUserPrincipal authUser, TicketCommentRegisterDto dto,
-            List<MultipartFile> files) {
-        Ticket ticket = ticketRepository.findById(dto.getTicketId())
+            List<MultipartFile> files, Long ticketId) {
+        Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new RuntimeException("Ticket not found"));
 
         User author = authUser.getUser();
@@ -69,6 +72,9 @@ public class TicketCommentServiceImpl implements TicketCommentService {
 
         if (files != null && !files.isEmpty()) {
             for (MultipartFile file : files) {
+                if (file == null || file.isEmpty()) {
+                    continue;
+                }
                 try {
                     String filePath = fileStorageService.storeFile(file, "comments");
                     TicketAttachment attachment = new TicketAttachment();
