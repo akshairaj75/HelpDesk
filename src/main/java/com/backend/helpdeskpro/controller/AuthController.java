@@ -6,10 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.service.annotation.PutExchange;
 
 import com.backend.helpdeskpro.dto.auth.AuthResponseDto;
 import com.backend.helpdeskpro.dto.auth.UserLoginDto;
@@ -19,6 +22,8 @@ import com.backend.helpdeskpro.entity.User;
 import com.backend.helpdeskpro.repository.UserRepository;
 import com.backend.helpdeskpro.security.CustomUserPrincipal;
 import com.backend.helpdeskpro.service.UserService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/helpdesk/auth")
@@ -79,6 +84,22 @@ public class AuthController {
     public ResponseEntity<List<UserResponseDto>> getAllUsers() {
         List<UserResponseDto> users = userService.getUsers();
         return ResponseEntity.ok(users);
+    }
+
+        @GetMapping("/fetch-all-staff")
+    public ResponseEntity<List<UserResponseDto>> getAllStaffUsers(@AuthenticationPrincipal CustomUserPrincipal authUser) {
+        List<UserResponseDto> users = userService.getStaffUsers(authUser);
+        return ResponseEntity.ok(users);
+    }
+
+
+    @PutMapping("/{userId}/activation/{isActive}")
+    public ResponseEntity<UserResponseDto> updateStatus(
+        @AuthenticationPrincipal CustomUserPrincipal authUser,
+        @PathVariable Long userId,
+        @PathVariable boolean isActive,
+        HttpServletRequest request) {
+        return ResponseEntity.ok(userService.updateStatus(userId, isActive, request, authUser));
     }
     
     

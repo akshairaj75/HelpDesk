@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,9 @@ import com.backend.helpdeskpro.entity.SlaPolicy;
 import com.backend.helpdeskpro.entity.Ticket;
 import com.backend.helpdeskpro.entity.TicketAttachment;
 import com.backend.helpdeskpro.entity.User;
+import com.backend.helpdeskpro.enums.AuditAction;
 import com.backend.helpdeskpro.enums.NotificationType;
+import com.backend.helpdeskpro.enums.TicketStatus;
 import com.backend.helpdeskpro.enums.UserRole;
 import com.backend.helpdeskpro.repository.CategoryRepository;
 import com.backend.helpdeskpro.repository.DepartmentRepository;
@@ -30,6 +33,7 @@ import com.backend.helpdeskpro.security.CustomUserPrincipal;
 import com.backend.helpdeskpro.service.NotificationService;
 import com.backend.helpdeskpro.service.TicketService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -59,6 +63,9 @@ public class TicketServiceImpl implements TicketService {
         @Autowired
         NotificationService notificationService;
 
+        @Autowired
+        AuditServiceImpl auditLogService;
+
         private String generateTicketNumber() {
 
                 String datePart = LocalDate.now()
@@ -73,8 +80,11 @@ public class TicketServiceImpl implements TicketService {
 
         @Transactional
         @Override
-        public TicketResponseDto createTicket(CustomUserPrincipal authUser, TicketCreateDto dto,
-                        List<MultipartFile> files) {
+        public TicketResponseDto createTicket(
+                        CustomUserPrincipal authUser,
+                        TicketCreateDto dto,
+                        List<MultipartFile> files,
+                        HttpServletRequest request) {
 
                 User currentUser = userRepository.findById(authUser.getUserId())
                                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -104,6 +114,20 @@ public class TicketServiceImpl implements TicketService {
                 ticket.setTicketNo(generateTicketNumber());
 
                 Ticket savedTicket = ticketRepository.save(ticket);
+
+                // CREATING AUDITING LOG
+                auditLogService.logAction(
+                                "TICKET",
+                                savedTicket.getId(),
+                                savedTicket.getReporter(),
+                                AuditAction.CREATED,
+                                Map.of(
+                                                "ticketNo", savedTicket.getTicketNo(),
+                                                "newStatus", savedTicket.getStatus(),
+                                                "subject", savedTicket.getSubject(),
+                                                "priority", savedTicket.getPriority().name(),
+                                                "status", savedTicket.getStatus()),
+                                request);
 
                 if (savedTicket.getAssignee() != null) {
                         notificationService.createNotification(
@@ -178,7 +202,8 @@ public class TicketServiceImpl implements TicketService {
         }
 
         @Override
-        public void addAttachment(CustomUserPrincipal authUser, Long ticketId, List<MultipartFile> files) {
+        public void addAttachment(CustomUserPrincipal authUser, Long ticketId, List<MultipartFile> files,
+                        HttpServletRequest request) {
                 Ticket ticket = ticketRepository.findById(ticketId)
                                 .orElseThrow(() -> new RuntimeException("Ticket not found"));
 
@@ -195,12 +220,78 @@ public class TicketServiceImpl implements TicketService {
                                         attachment.setFileUrl(filePath);
                                         attachment.setFileSizeKb((int) (file.getSize() / 1024));
                                         attachment.setMimeType(file.getContentType());
-                                        attachmentRepository.save(attachment);
+                                        TicketAttachment savedAttachment = attachmentRepository.save(attachment);
+
+                                        auditLogService.logAction(
+                                                        "TICKET_ATTACHMENT",
+                                                        savedAttachment.getId(),
+                                                        currentUser,
+                                                        AuditAction.ATTACHMENT_UPLOADED,
+                                                        Map.of(
+                                                                        "ticketId", ticket.getId(),
+                                                                        "ticketNo", ticket.getTicketNo(),
+                                                                        "fileName", savedAttachment.getFileName(),
+                                                                        "fileUrl", savedAttachment.getFileUrl(),
+                                                                        "mimeType",
+                                                                        savedAttachment.getMimeType() != null
+                                                                                        ? savedAttachment.getMimeType()
+                                                                                        : "",
+                                                                        "fileSizeKb",
+                                                                        savedAttachment.getFileSizeKb() != null
+                                                                                        ? savedAttachment
+                                                                                                        .getFileSizeKb()
+                                                                                        : 0),
+                                                        request);
                                 } catch (IOException e) {
                                         e.printStackTrace();
                                 }
                         }
                 }
+
+        }
+
+        @Override
+        public TicketResponseDto assignTicket(
+                        CustomUserPrincipal authUser,
+                        Long ticketId,
+                        Long assigneeId,
+                        HttpServletRequest request) {
+
+                Ticket ticket = ticketRepository.findById(ticketId)
+                                .orElseThrow(() -> new RuntimeException("No ticket found with id: " + ticketId));
+                User assigneeUser = userRepository.findById(assigneeId)
+                                .orElseThrow(() -> new RuntimeException("No user found with id: " + assigneeId));
+
+                ticket.setAssignee(assigneeUser);
+
+                ticket.setStatus(TicketStatus.IN_PROGRESS);
+                ticket.setSlaDueAt(LocalDateTime.now().plusMinutes(ticket.getSlaPolicy().getResolutionMinutes()));
+                ticket.setUpdatedAt(LocalDateTime.now());
+                ticketRepository.save(ticket);
+                auditLogService.logAction(
+                                "TICKET",
+                                ticket.getId(),
+                                authUser.getUser(),
+                                AuditAction.ASSIGNED,
+                                Map.of(
+                                                "ticketNo", ticket.getTicketNo(),
+                                                "assigneeId", assigneeUser.getId(),
+                                                "assignedTo", assigneeUser.getFullName(),
+                                                "assignedBy", authUser.getUser().getFullName(),
+                                                "subject", ticket.getSubject(),
+                                                "priority", ticket.getPriority().toString(),
+                                                "status", ticket.getStatus().toString()),
+                                request);
+                if (ticket.getAssignee() != null) {
+                        notificationService.createNotification(
+                                        ticket.getAssignee(),
+                                        ticket,
+                                        NotificationType.TICKET_ASSIGNED,
+                                        "Ticket Assigned",
+                                        "You have been assigned a new ticket",
+                                        "/tickets/" + ticket.getId());
+                }
+                return TicketResponseDto.fromEntity(ticket);
 
         }
 

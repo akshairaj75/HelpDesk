@@ -31,6 +31,7 @@ public class AuditLog {
         @JoinColumn(name = "performed_by")
         private User actor;
 
+        @Enumerated(EnumType.STRING)
         @Column(name = "action", nullable = false, length = 50)
         private AuditAction action;
 

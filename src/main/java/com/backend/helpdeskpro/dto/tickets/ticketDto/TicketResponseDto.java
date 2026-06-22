@@ -3,6 +3,7 @@ package com.backend.helpdeskpro.dto.tickets.ticketDto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.backend.helpdeskpro.dto.auth.UserResponseDto;
 import com.backend.helpdeskpro.dto.category.CategoryResponseDto;
 import com.backend.helpdeskpro.dto.tickets.ticketAttachment.TicketAttachmentDto;
 import com.backend.helpdeskpro.entity.Ticket;
@@ -16,6 +17,7 @@ public class TicketResponseDto {
     private String ticketNo;
     private Long reporterId;
     private Long assigneeId;
+    private UserResponseDto assignee;
     // private Long categoryId;
     private CategoryResponseDto category;
     private Long departmentId;
@@ -70,6 +72,14 @@ public class TicketResponseDto {
 
     public void setAssigneeId(Long assigneeId) {
         this.assigneeId = assigneeId;
+    }
+
+    public UserResponseDto getAssignee() {
+        return assignee;
+    }
+
+    public void setAssignee(UserResponseDto assignee) {
+        this.assignee = assignee;
     }
 
     public CategoryResponseDto getCategory() {
@@ -181,6 +191,7 @@ public class TicketResponseDto {
         dto.setTicketId(ticket.getId());
         dto.setTicketNo(ticket.getTicketNo());
         dto.setReporterId(ticket.getReporter() != null ? ticket.getReporter().getId() : null);
+        dto.setAssignee(ticket.getAssignee() != null ? UserResponseDto.fromEntity(ticket.getAssignee()) : null);
         dto.setAssigneeId(ticket.getAssignee() != null ? ticket.getAssignee().getId() : null);
         // dto.setCategoryId(ticket.getCategory() != null ? ticket.getCategory().getId().longValue() : null);
         dto.setCategory(ticket.getCategory() != null ? CategoryResponseDto.fromEntity(ticket.getCategory()) : null);

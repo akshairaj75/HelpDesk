@@ -16,6 +16,8 @@ import com.backend.helpdeskpro.dto.category.CategoryResponseDto;
 import com.backend.helpdeskpro.security.CustomUserPrincipal;
 import com.backend.helpdeskpro.service.CategoryService;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @RestController
 @RequestMapping("/api/helpdesk/category")
 public class CategoryController {
@@ -26,9 +28,10 @@ public class CategoryController {
     @PostMapping("/add-category")
     public ResponseEntity<CategoryResponseDto> createCategory(
         @AuthenticationPrincipal CustomUserPrincipal authUser,
-        @RequestBody CategoryCreateDto dto
+        @RequestBody CategoryCreateDto dto,
+        HttpServletRequest request
     ) {
-        CategoryResponseDto resp = categoryService.createCategory(authUser, dto);
+        CategoryResponseDto resp = categoryService.createCategory(authUser, dto, request);
         return ResponseEntity.ok(resp);
     }
 
@@ -41,9 +44,10 @@ public class CategoryController {
     @PostMapping("/add-category/bulk")
     public ResponseEntity<List<CategoryResponseDto>> createCategoryBulk(
             @AuthenticationPrincipal CustomUserPrincipal authUser,
-            @RequestBody List<CategoryCreateDto> dto) {
+            @RequestBody List<CategoryCreateDto> dto,
+            HttpServletRequest request) {
         List<CategoryResponseDto> resp = dto.stream()
-                .map(d -> categoryService.createCategory(authUser, d))
+                .map(d -> categoryService.createCategory(authUser, d, request))
                 .toList();
         return ResponseEntity.ok(resp);
     }

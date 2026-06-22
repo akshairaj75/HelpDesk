@@ -8,7 +8,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,6 +21,9 @@ import com.backend.helpdeskpro.dto.tickets.ticketDto.TicketResponseDto;
 import com.backend.helpdeskpro.security.CustomUserPrincipal;
 import com.backend.helpdeskpro.service.TicketService;
 import com.backend.helpdeskpro.service.UserService;
+
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import jakarta.servlet.http.HttpServletRequest;
 
 @RequestMapping("/api/helpdesk/tickets")
 @RestController
@@ -34,9 +39,10 @@ public class TicketController {
     public ResponseEntity<TicketResponseDto> createTicket(
             @AuthenticationPrincipal CustomUserPrincipal authUser,
             @RequestPart("data") TicketCreateDto dto,
-            @RequestPart(value = "files", required = false) List<MultipartFile> files) {
+            @RequestPart(value = "files", required = false) List<MultipartFile> files,
+            HttpServletRequest request) {
 
-        TicketResponseDto res = ticketService.createTicket(authUser, dto, files);
+        TicketResponseDto res = ticketService.createTicket(authUser, dto, files, request);
         return ResponseEntity.ok(res);
     }
 
@@ -75,13 +81,22 @@ public class TicketController {
     public ResponseEntity<TicketResponseDto> addAttachment(
             @AuthenticationPrincipal CustomUserPrincipal authUser,
             @PathVariable Long ticketId,
-            @RequestPart("files") List<MultipartFile> files) {
+            @RequestPart("files") List<MultipartFile> files,
+            HttpServletRequest request) {
 
-            ticketService.addAttachment(authUser, ticketId, files);
-                
+        ticketService.addAttachment(authUser, ticketId, files, request);
+
         return ResponseEntity.ok(ticketService.getTicketById(authUser, ticketId));
     }
-    
-    
-    
+
+    @PutMapping("/{ticketId}/assign/{assigneeId}")
+    public ResponseEntity<TicketResponseDto> assignTicket(
+            @AuthenticationPrincipal CustomUserPrincipal authUser,
+            @PathVariable Long ticketId,
+            @PathVariable Long assigneeId,
+            HttpServletRequest request) {
+        TicketResponseDto ticket = ticketService.assignTicket(authUser, ticketId, assigneeId, request);
+        return ResponseEntity.ok(ticket);
+    }
+
 }

@@ -8,9 +8,11 @@ import com.backend.helpdeskpro.dto.tickets.ticketDto.TicketCreateDto;
 import com.backend.helpdeskpro.dto.tickets.ticketDto.TicketResponseDto;
 import com.backend.helpdeskpro.security.CustomUserPrincipal;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 public interface TicketService {
 
-    TicketResponseDto createTicket(CustomUserPrincipal authUser, TicketCreateDto dto, List<MultipartFile> files);
+    TicketResponseDto createTicket(CustomUserPrincipal authUser, TicketCreateDto dto, List<MultipartFile> files, HttpServletRequest request);
 
     List<TicketResponseDto> getAllTickets(CustomUserPrincipal authUser);
 
@@ -18,6 +20,9 @@ public interface TicketService {
 
     List<TicketResponseDto> getTicketsByReporterId(CustomUserPrincipal authUser, Long userId);
 
-    void addAttachment(CustomUserPrincipal authUser, Long ticketId, List<MultipartFile> files);
+    void addAttachment(CustomUserPrincipal authUser, Long ticketId, List<MultipartFile> files, HttpServletRequest request);
+
+    TicketResponseDto assignTicket(CustomUserPrincipal authUser, Long ticketId, Long assigneeId,
+            HttpServletRequest request);
 
 }

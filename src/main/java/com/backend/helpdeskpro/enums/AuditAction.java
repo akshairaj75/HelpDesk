@@ -12,6 +12,6 @@ public enum AuditAction {
     NOTIFICATION_READ,
     SLA_BREACHED,
     LOGIN,
-    LOGOUT
+    LOGOUT,
 
 }

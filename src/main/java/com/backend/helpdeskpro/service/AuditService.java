@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.backend.helpdeskpro.dto.audit.AuditLogResponseDto;
+import com.backend.helpdeskpro.dto.audit.RecentActivityDto;
 import com.backend.helpdeskpro.entity.User;
 import com.backend.helpdeskpro.enums.AuditAction;
 import com.backend.helpdeskpro.security.CustomUserPrincipal;
@@ -24,6 +25,7 @@ public interface AuditService {
 
     List<AuditLogResponseDto> getLogsByUser(Long userId);
 
-    List<AuditLogResponseDto> getAllAuditLogs(CustomUserPrincipal authUser);
+    // List<AuditLogResponseDto> getAllAuditLogs(CustomUserPrincipal authUser);
+    List<RecentActivityDto> getAllAuditLogs(CustomUserPrincipal authUser);
 
 }

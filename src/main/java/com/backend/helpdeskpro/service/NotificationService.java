@@ -8,13 +8,15 @@ import com.backend.helpdeskpro.entity.User;
 import com.backend.helpdeskpro.enums.NotificationType;
 import com.backend.helpdeskpro.security.CustomUserPrincipal;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 public interface NotificationService {
 
     List<NotificationDto> getNotificationsForUser(CustomUserPrincipal authUser);
 
-    void markAsRead(Long notificationId);
+    void markAsRead(Long notificationId, CustomUserPrincipal authUser, HttpServletRequest request);
 
-    void markAllAsRead(CustomUserPrincipal authUser);
+    void markAllAsRead(CustomUserPrincipal authUser, HttpServletRequest request);
 
     void createNotification(
             User receiver,

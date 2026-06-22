@@ -1,21 +1,27 @@
 package com.backend.helpdeskpro.serviceImpl;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.backend.helpdeskpro.dto.tickets.ticketDto.TicketResponseDto;
+import com.backend.helpdeskpro.dto.tickets.ticketStatus.TicketStatusHistoryDto;
 import com.backend.helpdeskpro.entity.Ticket;
 import com.backend.helpdeskpro.entity.TicketStatusHistory;
 import com.backend.helpdeskpro.entity.User;
+import com.backend.helpdeskpro.enums.AuditAction;
 import com.backend.helpdeskpro.enums.NotificationType;
 import com.backend.helpdeskpro.enums.TicketStatus;
 import com.backend.helpdeskpro.repository.TicketRepository;
 import com.backend.helpdeskpro.repository.TicketStatusHistoryRepository;
 import com.backend.helpdeskpro.security.CustomUserPrincipal;
+import com.backend.helpdeskpro.service.AuditService;
 import com.backend.helpdeskpro.service.NotificationService;
 import com.backend.helpdeskpro.service.TicketStatusHistoryService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class TicketStatusHistoryServiceImpl implements TicketStatusHistoryService {
@@ -29,28 +35,40 @@ public class TicketStatusHistoryServiceImpl implements TicketStatusHistoryServic
     @Autowired
     NotificationService notificationService;
 
+    @Autowired
+    AuditService auditLogService;
 
     @Override
     public TicketResponseDto updateTicketStatus(
             CustomUserPrincipal authUser,
-            Long ticketId,
-            TicketStatus status,
-            String reason) {
+            TicketStatusHistoryDto dto,
+            HttpServletRequest request) {
 
-        Ticket ticket = ticketRepository.findById(ticketId)
+        Ticket ticket = ticketRepository.findById(dto.getTicketId())
                 .orElseThrow(() -> new RuntimeException("Ticket not found"));
 
         TicketStatus oldStatus = ticket.getStatus();
-        ticket.setStatus(status);
+        ticket.setStatus(dto.getNewStatus());
 
-        if (status == TicketStatus.RESOLVED) {
+        if (dto.getNewStatus() == TicketStatus.RESOLVED) {
             ticket.setResolvedAt(LocalDateTime.now());
-        } else if (status == TicketStatus.CLOSED) {
+        } else if (dto.getNewStatus() == TicketStatus.CLOSED) {
             ticket.setClosedAt(LocalDateTime.now());
         }
 
+        Ticket savedTicket = ticketRepository.save(ticket);
 
-        ticketRepository.save(ticket);
+        auditLogService.logAction(
+                "TICKET",
+                savedTicket.getId(),
+                authUser.getUser(),
+                AuditAction.STATUS_CHANGED,
+                Map.of(
+                        "ticketNo", savedTicket.getTicketNo(),
+                        "oldStatus", oldStatus.name(),
+                        "newStatus", dto.getNewStatus().name(),
+                        "reason", dto.getReason() != null ? dto.getReason() : ""),
+                request);
 
         User receiver = null;
 
@@ -68,9 +86,9 @@ public class TicketStatusHistoryServiceImpl implements TicketStatusHistoryServic
         TicketStatusHistory history = new TicketStatusHistory();
         history.setTicket(ticket);
         history.setOldStatus(oldStatus);
-        history.setNewStatus(status);
+        history.setNewStatus(dto.getNewStatus());
         history.setChangedBy(authUser.getUser());
-        history.setReason(reason);
+        history.setReason(dto.getReason());
         history.setChangedAt(LocalDateTime.now());
 
         statusHistoryRepository.save(history);

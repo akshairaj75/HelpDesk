@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.helpdeskpro.dto.audit.AuditLogResponseDto;
+import com.backend.helpdeskpro.dto.audit.RecentActivityDto;
 import com.backend.helpdeskpro.security.CustomUserPrincipal;
 import com.backend.helpdeskpro.service.AuditService;
 
@@ -19,7 +20,7 @@ public class AuditController {
     AuditService auditService;
 
     @GetMapping("/audit-logs")
-    public List<AuditLogResponseDto> getAllAuditLogs(CustomUserPrincipal authUser) {
+    public List<RecentActivityDto> getAllAuditLogs(CustomUserPrincipal authUser) {
         return auditService.getAllAuditLogs(authUser);
     }
 

@@ -1,5 +1,7 @@
 package com.backend.helpdeskpro.dto.audit;
 
+import java.time.LocalDateTime;
+
 import com.backend.helpdeskpro.dto.auth.UserResponseDto;
 import com.backend.helpdeskpro.entity.AuditLog;
 import com.backend.helpdeskpro.enums.AuditAction;
@@ -11,7 +13,8 @@ public class AuditLogResponseDto {
     private UserResponseDto performedBy;
     private String payload;
     private AuditAction action;
-    private String ipAdress;
+    private String ipAddress; 
+    private LocalDateTime createdAt;
 
     public Long getAuditLogId() {
         return auditLogId;
@@ -61,14 +64,21 @@ public class AuditLogResponseDto {
         this.action = action;
     }
 
-    public String getIpAdress() {
-        return ipAdress;
+    public String getIpAddress() {
+        return ipAddress;
     }
 
-    public void setIpAdress(String ipAdress) {
-        this.ipAdress = ipAdress;
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
     }
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
     public static AuditLogResponseDto fromEntity(AuditLog auditLog) {
         AuditLogResponseDto dto = new AuditLogResponseDto();
         dto.setAuditLogId(auditLog.getId());
@@ -79,7 +89,8 @@ public class AuditLogResponseDto {
         }
         dto.setPayload(auditLog.getPayload());
         dto.setAction(auditLog.getAction());
-        dto.setIpAdress(auditLog.getIpAddress());
+        dto.setIpAddress(auditLog.getIpAddress());
+        dto.setCreatedAt(auditLog.getCreatedAt());
         return dto;
     }
 

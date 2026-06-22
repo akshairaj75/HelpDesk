@@ -12,18 +12,17 @@ import org.springframework.web.filter.CorsFilter;
 @Configuration
 public class CorsConfig {
 
-    @Value("${file.angular-url}")
-    private String angularUrl;
+    // @Value("${file.angular-url}")
+    // private String angularUrl;
 
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
         config.setAllowedOrigins(List.of(
-                angularUrl,
                 "http://localhost:4200",
-                "http://192.168.0.93:4200"
-            ));
+                "http://192.168.0.94:4200"
+        ));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -31,4 +30,3 @@ public class CorsConfig {
         return new CorsFilter(source);
     }
 }
-

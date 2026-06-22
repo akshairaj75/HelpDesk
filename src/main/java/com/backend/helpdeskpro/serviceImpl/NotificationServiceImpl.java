@@ -2,6 +2,7 @@ package com.backend.helpdeskpro.serviceImpl;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,12 +11,15 @@ import com.backend.helpdeskpro.dto.notification.NotificationDto;
 import com.backend.helpdeskpro.entity.Notification;
 import com.backend.helpdeskpro.entity.Ticket;
 import com.backend.helpdeskpro.entity.User;
+import com.backend.helpdeskpro.enums.AuditAction;
 import com.backend.helpdeskpro.enums.NotificationChannel;
 import com.backend.helpdeskpro.enums.NotificationType;
 import com.backend.helpdeskpro.repository.NotificationRepository;
 import com.backend.helpdeskpro.security.CustomUserPrincipal;
+import com.backend.helpdeskpro.service.AuditService;
 import com.backend.helpdeskpro.service.NotificationService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -23,6 +27,9 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Autowired
     NotificationRepository notificationRepository;
+
+    @Autowired
+    AuditService auditLogService;
 
     @Override
     public List<NotificationDto> getNotificationsForUser(CustomUserPrincipal authUser) {
@@ -34,20 +41,42 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public void markAsRead(Long notificationId) {
+    public void markAsRead(Long notificationId, CustomUserPrincipal authUser, HttpServletRequest request) {
         Notification notification = notificationRepository.findById(notificationId)
                 .orElseThrow(() -> new RuntimeException("Notification not found"));
         notification.setRead(true);
         notificationRepository.save(notification);
+        auditLogService.logAction(
+                "NOTIFICATION",
+                notification.getId(),
+                authUser.getUser(),
+                AuditAction.NOTIFICATION_READ,
+                Map.of(
+                        "title", notification.getTitle(),
+                        "type", notification.getType().name()),
+                request);
 
     }
 
     @Override
-    public void markAllAsRead(CustomUserPrincipal authUser) {
+    public void markAllAsRead(CustomUserPrincipal authUser, HttpServletRequest request) {
         List<Notification> notifications = notificationRepository
                 .findByUserIdAndReadFalseOrderBySentAtDesc(authUser.getUserId());
-        notifications.forEach(notification -> notification.setRead(true));
-        notificationRepository.saveAll(notifications);
+        for (Notification notification : notifications) {
+            notification.setRead(true);
+            Notification savedNotification = notificationRepository.save(notification);
+
+            auditLogService.logAction(
+                    "NOTIFICATION",
+                    savedNotification.getId(),
+                    savedNotification.getUser(),
+                    AuditAction.NOTIFICATION_READ,
+                    Map.of(
+                            "title", savedNotification.getTitle(),
+                            "type", savedNotification.getType().name()),
+                    request);
+        }
+
     }
 
     @Override

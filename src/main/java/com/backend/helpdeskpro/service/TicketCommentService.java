@@ -8,17 +8,19 @@ import com.backend.helpdeskpro.dto.tickets.ticketComment.TicketCommentRegisterDt
 import com.backend.helpdeskpro.dto.tickets.ticketComment.TicketCommentResponseDto;
 import com.backend.helpdeskpro.security.CustomUserPrincipal;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 public interface TicketCommentService {
 
     TicketCommentRegisterDto addComment(CustomUserPrincipal authUser, TicketCommentRegisterDto dto,
-            List<MultipartFile> files, Long ticketId);
+            List<MultipartFile> files, Long ticketId, HttpServletRequest request);
 
     List<TicketCommentResponseDto> getCommentsByTicketId(CustomUserPrincipal authUser, Long ticketId);
 
-    void addAttachmentToComment(CustomUserPrincipal authUser, Long commentId, List<MultipartFile> files);
+    void addAttachmentToComment(CustomUserPrincipal authUser, Long commentId, List<MultipartFile> files, HttpServletRequest request);
 
-    void deleteAttachment(Long attachmentId);
+    void deleteAttachment(Long attachmentId, HttpServletRequest request, CustomUserPrincipal authUser);
 
-    void deleteComment(Long commentId);
+    void deleteComment(Long commentId, Long commentId2, HttpServletRequest request);
 
 }

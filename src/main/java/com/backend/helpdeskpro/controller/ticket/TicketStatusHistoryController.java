@@ -10,9 +10,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.helpdeskpro.dto.tickets.ticketDto.TicketResponseDto;
+import com.backend.helpdeskpro.dto.tickets.ticketStatus.TicketStatusHistoryDto;
+import com.backend.helpdeskpro.entity.TicketStatusHistory;
 import com.backend.helpdeskpro.enums.TicketStatus;
 import com.backend.helpdeskpro.security.CustomUserPrincipal;
 import com.backend.helpdeskpro.service.TicketStatusHistoryService;
+
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import jakarta.servlet.http.HttpServletRequest;
 
 @RequestMapping("/api/helpdesk/tickets/status")
 @RestController
@@ -26,9 +31,9 @@ public class TicketStatusHistoryController {
     public ResponseEntity<TicketResponseDto> updateTicketStatus(
             @AuthenticationPrincipal CustomUserPrincipal authUser,
             @PathVariable Long ticketId,
-            @RequestParam TicketStatus status,
-            @RequestParam(required = false) String reason) {
-        TicketResponseDto updatedTicket = ticketStatusService.updateTicketStatus(authUser, ticketId, status, reason);
+            @RequestBody TicketStatusHistoryDto dto,
+            HttpServletRequest request) {
+        TicketResponseDto updatedTicket = ticketStatusService.updateTicketStatus(authUser,dto, request);
         return ResponseEntity.ok(updatedTicket);
     }
 

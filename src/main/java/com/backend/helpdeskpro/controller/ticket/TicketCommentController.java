@@ -19,6 +19,8 @@ import com.backend.helpdeskpro.dto.tickets.ticketComment.TicketCommentResponseDt
 import com.backend.helpdeskpro.security.CustomUserPrincipal;
 import com.backend.helpdeskpro.service.TicketCommentService;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @RequestMapping("/api/helpdesk/tickets/comment")
 @RestController
 public class TicketCommentController {
@@ -31,8 +33,9 @@ public class TicketCommentController {
             @AuthenticationPrincipal CustomUserPrincipal authUser,
             @PathVariable Long ticketId,
             @RequestPart("data") TicketCommentRegisterDto dto,
-            @RequestPart(value = "files", required = false) List<MultipartFile> files) {
-        TicketCommentRegisterDto resp = ticketCommentService.addComment(authUser, dto, files, ticketId);
+            @RequestPart(value = "files", required = false) List<MultipartFile> files,
+            HttpServletRequest request) {
+        TicketCommentRegisterDto resp = ticketCommentService.addComment(authUser, dto, files, ticketId, request);
         return ResponseEntity.ok(resp);
     }
 
@@ -48,29 +51,30 @@ public class TicketCommentController {
     public ResponseEntity<TicketCommentRegisterDto> addAttachmentToComment(
             @AuthenticationPrincipal CustomUserPrincipal authUser,
             @PathVariable Long commentId,
-            @RequestPart("files") List<MultipartFile> files) {
-                
-            ticketCommentService.addAttachmentToComment(authUser, commentId, files);
-            return ResponseEntity.ok().build();
+            @RequestPart("files") List<MultipartFile> files,
+             HttpServletRequest request) {
+
+        ticketCommentService.addAttachmentToComment(authUser, commentId, files, request);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/attachment/{attachmentId}/delete")
     public ResponseEntity<Void> deleteAttachment(
             @AuthenticationPrincipal CustomUserPrincipal authUser,
-            @PathVariable Long attachmentId) {
-                ticketCommentService.deleteAttachment(attachmentId);
+            @PathVariable Long attachmentId,
+         HttpServletRequest request) {
+        ticketCommentService.deleteAttachment(attachmentId,request,authUser);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{commentId}/delete")
     public ResponseEntity<Void> deleteComment(
             @AuthenticationPrincipal CustomUserPrincipal authUser,
-            @PathVariable Long commentId) {
-                
-                ticketCommentService.deleteComment(commentId);
+            @PathVariable Long commentId,
+         HttpServletRequest request) {
+
+        ticketCommentService.deleteComment(commentId, commentId, request);
         return ResponseEntity.noContent().build();
     }
-    
-    
 
 }

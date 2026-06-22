@@ -5,13 +5,18 @@ import com.backend.helpdeskpro.dto.auth.UserLoginDto;
 import com.backend.helpdeskpro.dto.auth.UserRegisterDto;
 import com.backend.helpdeskpro.dto.auth.UserResponseDto;
 import com.backend.helpdeskpro.entity.User;
+import com.backend.helpdeskpro.enums.AuditAction;
 import com.backend.helpdeskpro.enums.AuthProvider;
+import com.backend.helpdeskpro.enums.UserRole;
 import com.backend.helpdeskpro.repository.UserRepository;
+import com.backend.helpdeskpro.security.CustomUserPrincipal;
 import com.backend.helpdeskpro.service.UserService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,6 +34,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private JwtService jwtService;
+
+    @Autowired
+    AuditServiceImpl auditLogService;
 
     @Transactional
     @Override
@@ -49,6 +57,10 @@ public class UserServiceImpl implements UserService {
                         dto.getPassword()));
 
         User savedUser = userRepository.save(user);
+
+        
+
+
         String token = jwtService.generateToken(user);
 
         return AuthResponseDto.authResponseDto(savedUser, token);
@@ -85,6 +97,37 @@ public class UserServiceImpl implements UserService {
         return res.stream()
                 .map(UserRegisterDto::fromEntity)
                 .toList();
+    }
+
+    @Override
+    public UserResponseDto updateStatus(
+            Long userId,
+            boolean isActive,
+            HttpServletRequest request,
+            CustomUserPrincipal authUser) {
+        User user = userRepository.findById(userId).orElseThrow();
+        User performedBy = userRepository.findById(authUser.getUserId()).orElseThrow();
+        user.setActive(isActive);
+        User savedUser = userRepository.save(user);
+        auditLogService.logAction(
+                "USER",
+                user.getId(),
+                performedBy,
+                AuditAction.UPDATED,
+                Map.of(
+                        "targetUserEmail", user.getEmail(),
+                        "isActive", user.getActive()),
+                request);
+        return UserResponseDto.fromEntity(savedUser);
+    }
+
+    @Override
+    public List<UserResponseDto> getStaffUsers(CustomUserPrincipal authUser) {
+        List<User> users = userRepository.findByRole(UserRole.STAFF);
+        return users.stream()
+                .map(UserRegisterDto::fromEntity)
+                .toList();
+
     }
 
 }

@@ -17,6 +17,8 @@ import com.backend.helpdeskpro.dto.notification.NotificationDto;
 import com.backend.helpdeskpro.security.CustomUserPrincipal;
 import com.backend.helpdeskpro.service.NotificationService;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @RestController
 @RequestMapping("/api/helpdesk/notification")
 public class NotificationController {
@@ -34,15 +36,17 @@ public class NotificationController {
     @PatchMapping("/{notificationId}/read")
     public ResponseEntity<Void> markAsRead(
             @AuthenticationPrincipal CustomUserPrincipal authUser,
-            @PathVariable Long notificationId) {
-        notificatService.markAsRead(notificationId);
+            @PathVariable Long notificationId,
+        HttpServletRequest request) {
+        notificatService.markAsRead(notificationId,authUser,request);
         return ResponseEntity.ok().build();
     }
 
     @PatchMapping("/read-all")
     public ResponseEntity<Void> markAllAsRead(
-            @AuthenticationPrincipal CustomUserPrincipal authUser) {
-        notificatService.markAllAsRead(authUser);
+            @AuthenticationPrincipal CustomUserPrincipal authUser,
+        HttpServletRequest request) {
+        notificatService.markAllAsRead(authUser,request);
         return ResponseEntity.ok().build();
     }
 
