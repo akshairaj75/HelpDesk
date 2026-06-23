@@ -3,7 +3,6 @@ package com.backend.helpdeskpro.dto.tickets.ticketStatus;
 import com.backend.helpdeskpro.entity.TicketStatusHistory;
 import com.backend.helpdeskpro.enums.TicketStatus;
 
-import java.time.LocalDateTime;
 
 public class TicketStatusHistoryDto {
     private Long ticketId;

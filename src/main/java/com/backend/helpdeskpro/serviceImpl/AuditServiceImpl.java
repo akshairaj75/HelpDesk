@@ -46,7 +46,7 @@ public class AuditServiceImpl implements AuditService {
     @Override
     public List<RecentActivityDto> getAllAuditLogs(CustomUserPrincipal authUser) {
 
-        List<AuditLog> auditLogs = auditLogRepository.findAll();
+        List<AuditLog> auditLogs = auditLogRepository.findAllByOrderByCreatedAtDesc();
         return auditLogs
                 .stream()
                 .map(this::mapToRecentActivity)
@@ -153,7 +153,7 @@ public class AuditServiceImpl implements AuditService {
                 dto.setMessage(
                         readPayloadValue(payload, "ticketNo")
                                 + " assigned to "
-                                + readPayloadValue(payload, "assigneeName"));
+                                + readPayloadValue(payload, "assignedTo"));
             }
 
             case STATUS_CHANGED -> {
@@ -195,6 +195,91 @@ public class AuditServiceImpl implements AuditService {
                         readPayloadValue(payload, "fileName")
                                 + " uploaded to "
                                 + readPayloadValue(payload, "ticketNo"));
+            }
+            case CREATED -> {
+                String entityType = log.getEntityType();
+
+                if ("TICKET".equals(entityType)) {
+                    dto.setTitle("Ticket Created");
+                    dto.setColor("success");
+
+                    String userName = log.getActor() != null
+                            ? log.getActor().getFullName()
+                            : "Someone";
+
+                    dto.setMessage(
+                            readPayloadValue(payload, "ticketNo")
+                                    + " created by "
+                                    + userName);
+                }
+
+                else if ("CATEGORY".equals(entityType)) {
+                    dto.setTitle("Category Created");
+                    dto.setColor("primary");
+
+                    String userName = log.getActor() != null
+                            ? log.getActor().getFullName()
+                            : "Someone";
+
+                    dto.setMessage(
+                            "Category "
+                                    + readPayloadValue(payload, "name")
+                                    + " created by "
+                                    + userName);
+                }
+
+                else if ("SLA_POLICY".equals(entityType)) {
+                    dto.setTitle("SLA Policy Created");
+                    dto.setColor("warning");
+
+                    String userName = log.getActor() != null
+                            ? log.getActor().getFullName()
+                            : "Someone";
+
+                    dto.setMessage(
+                            "SLA policy "
+                                    + readPayloadValue(payload, "name")
+                                    + " created for "
+                                    + readPayloadValue(payload, "priorityLevel")
+                                    + " priority by "
+                                    + userName);
+                }
+
+                else if ("DEPARTMENT".equals(entityType)) {
+                    dto.setTitle("Department Created");
+                    dto.setColor("primary");
+
+                    String userName = log.getActor() != null
+                            ? log.getActor().getFullName()
+                            : "Someone";
+
+                    dto.setMessage(
+                            "Department "
+                                    + readPayloadValue(payload, "name")
+                                    + " created by "
+                                    + userName);
+                }
+
+                else if ("USER".equals(entityType)) {
+                    dto.setTitle("User Created");
+                    dto.setColor("primary");
+
+                    String userName = log.getActor() != null
+                            ? log.getActor().getFullName()
+                            : "Someone";
+
+                    dto.setMessage(
+                            "User "
+                                    + readPayloadValue(payload, "email")
+                                    + " created by "
+                                    + userName);
+                }
+
+                else {
+                    dto.setTitle("Created");
+                    dto.setColor("success");
+                    dto.setMessage(entityType + " created");
+                }
             }
 
             default -> {

@@ -129,14 +129,16 @@ public class TicketServiceImpl implements TicketService {
                                                 "status", savedTicket.getStatus()),
                                 request);
 
-                if (savedTicket.getAssignee() != null) {
+                if (savedTicket.getAssignee() != null
+                                && !savedTicket.getAssignee().getId().equals(authUser.getUserId())) {
+                        User receiver = savedTicket.getAssignee();
                         notificationService.createNotification(
-                                        savedTicket.getAssignee(),
-                                        savedTicket,
+                                        receiver,
+                                        ticket,
                                         NotificationType.TICKET_ASSIGNED,
                                         "Ticket Assigned",
                                         "You have been assigned a new ticket",
-                                        "/tickets/" + savedTicket.getId());
+                                        "/tickets/" + ticket.getId());
                 }
 
                 if (files != null && !files.isEmpty()) {

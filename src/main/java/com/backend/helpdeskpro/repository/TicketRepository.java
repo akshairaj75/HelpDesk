@@ -20,4 +20,8 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     List<Ticket> findByReporter(User user);
 
     List<Ticket> findByAssignee(User user);
+
+    List<Ticket> findBySlaDueAtBeforeAndSlaBreachedFalseAndStatusNotIn(
+            LocalDateTime now,
+            List<TicketStatus> statuses);
 }

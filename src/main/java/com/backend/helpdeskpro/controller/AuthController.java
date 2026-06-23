@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.service.annotation.PutExchange;
 
 import com.backend.helpdeskpro.dto.auth.AuthResponseDto;
 import com.backend.helpdeskpro.dto.auth.UserLoginDto;
@@ -76,8 +75,8 @@ public class AuthController {
 
     // @GetMapping("/fetch-all")
     // public ResponseEntity<List<UserResponseDto>> getAllUsers() {
-    //     List<UserResponseDto> users = userService.getUsers();
-    //     return ResponseEntity.ok(users);
+    // List<UserResponseDto> users = userService.getUsers();
+    // return ResponseEntity.ok(users);
     // }
 
     @GetMapping("/fetch-all")
@@ -86,23 +85,20 @@ public class AuthController {
         return ResponseEntity.ok(users);
     }
 
-        @GetMapping("/fetch-all-staff")
-    public ResponseEntity<List<UserResponseDto>> getAllStaffUsers(@AuthenticationPrincipal CustomUserPrincipal authUser) {
+    @GetMapping("/fetch-all-staff")
+    public ResponseEntity<List<UserResponseDto>> getAllStaffUsers(
+            @AuthenticationPrincipal CustomUserPrincipal authUser) {
         List<UserResponseDto> users = userService.getStaffUsers(authUser);
         return ResponseEntity.ok(users);
     }
 
-
     @PutMapping("/{userId}/activation/{isActive}")
     public ResponseEntity<UserResponseDto> updateStatus(
-        @AuthenticationPrincipal CustomUserPrincipal authUser,
-        @PathVariable Long userId,
-        @PathVariable boolean isActive,
-        HttpServletRequest request) {
+            @AuthenticationPrincipal CustomUserPrincipal authUser,
+            @PathVariable Long userId,
+            @PathVariable boolean isActive,
+            HttpServletRequest request) {
         return ResponseEntity.ok(userService.updateStatus(userId, isActive, request, authUser));
     }
-    
-    
-
 
 }

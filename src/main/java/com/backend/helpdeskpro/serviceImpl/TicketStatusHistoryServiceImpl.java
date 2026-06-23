@@ -10,15 +10,12 @@ import com.backend.helpdeskpro.dto.tickets.ticketDto.TicketResponseDto;
 import com.backend.helpdeskpro.dto.tickets.ticketStatus.TicketStatusHistoryDto;
 import com.backend.helpdeskpro.entity.Ticket;
 import com.backend.helpdeskpro.entity.TicketStatusHistory;
-import com.backend.helpdeskpro.entity.User;
 import com.backend.helpdeskpro.enums.AuditAction;
-import com.backend.helpdeskpro.enums.NotificationType;
 import com.backend.helpdeskpro.enums.TicketStatus;
 import com.backend.helpdeskpro.repository.TicketRepository;
 import com.backend.helpdeskpro.repository.TicketStatusHistoryRepository;
 import com.backend.helpdeskpro.security.CustomUserPrincipal;
 import com.backend.helpdeskpro.service.AuditService;
-import com.backend.helpdeskpro.service.NotificationService;
 import com.backend.helpdeskpro.service.TicketStatusHistoryService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,9 +30,6 @@ public class TicketStatusHistoryServiceImpl implements TicketStatusHistoryServic
     TicketRepository ticketRepository;
 
     @Autowired
-    NotificationService notificationService;
-
-    @Autowired
     AuditService auditLogService;
 
     @Override
@@ -43,20 +37,41 @@ public class TicketStatusHistoryServiceImpl implements TicketStatusHistoryServic
             CustomUserPrincipal authUser,
             TicketStatusHistoryDto dto,
             HttpServletRequest request) {
+        System.out.println("--===========================================");
+
+        System.out.println("DTO newStatus = " + dto.getNewStatus());
+        System.out.println("DTO ticketId = " + dto.getTicketId());
+
+        System.out.println("--===========================================");
 
         Ticket ticket = ticketRepository.findById(dto.getTicketId())
                 .orElseThrow(() -> new RuntimeException("Ticket not found"));
 
         TicketStatus oldStatus = ticket.getStatus();
+
         ticket.setStatus(dto.getNewStatus());
 
         if (dto.getNewStatus() == TicketStatus.RESOLVED) {
             ticket.setResolvedAt(LocalDateTime.now());
         } else if (dto.getNewStatus() == TicketStatus.CLOSED) {
             ticket.setClosedAt(LocalDateTime.now());
+            ticket.setResolvedAt(LocalDateTime.now());
+        } else {
+            ticket.setResolvedAt(null);
+            ticket.setClosedAt(null);
         }
 
         Ticket savedTicket = ticketRepository.save(ticket);
+
+        TicketStatusHistory history = new TicketStatusHistory();
+        history.setTicket(savedTicket);
+        history.setOldStatus(oldStatus);
+        history.setNewStatus(savedTicket.getStatus());
+        history.setChangedBy(authUser.getUser());
+        history.setReason(dto.getReason());
+        history.setChangedAt(LocalDateTime.now());
+
+        statusHistoryRepository.save(history);
 
         auditLogService.logAction(
                 "TICKET",
@@ -66,32 +81,9 @@ public class TicketStatusHistoryServiceImpl implements TicketStatusHistoryServic
                 Map.of(
                         "ticketNo", savedTicket.getTicketNo(),
                         "oldStatus", oldStatus.name(),
-                        "newStatus", dto.getNewStatus().name(),
+                        "newStatus", savedTicket.getStatus().name(),
                         "reason", dto.getReason() != null ? dto.getReason() : ""),
                 request);
-
-        User receiver = null;
-
-        if (ticket.getAssignee() != null && !ticket.getAssignee().getId().equals(authUser.getUserId())) {
-            receiver = ticket.getAssignee();
-            notificationService.createNotification(
-                    receiver,
-                    ticket,
-                    NotificationType.TICKET_UPDATED,
-                    "New comment added",
-                    authUser.getUser().getFullName() + " commented on ticket " + ticket.getTicketNo(),
-                    "/tickets/" + ticket.getId());
-        }
-
-        TicketStatusHistory history = new TicketStatusHistory();
-        history.setTicket(ticket);
-        history.setOldStatus(oldStatus);
-        history.setNewStatus(dto.getNewStatus());
-        history.setChangedBy(authUser.getUser());
-        history.setReason(dto.getReason());
-        history.setChangedAt(LocalDateTime.now());
-
-        statusHistoryRepository.save(history);
 
         return TicketResponseDto.fromEntity(ticket);
 

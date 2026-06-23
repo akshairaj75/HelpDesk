@@ -2,8 +2,6 @@ package com.backend.helpdeskpro.service;
 
 import java.util.List;
 
-import org.jspecify.annotations.Nullable;
-
 import com.backend.helpdeskpro.dto.auth.AuthResponseDto;
 import com.backend.helpdeskpro.dto.auth.UserLoginDto;
 import com.backend.helpdeskpro.dto.auth.UserRegisterDto;

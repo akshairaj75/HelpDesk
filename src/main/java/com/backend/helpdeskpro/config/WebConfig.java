@@ -1,6 +1,5 @@
 package com.backend.helpdeskpro.config;
 
-import org.springframework.context.annotation.Bean;
 // import java.nio.file.Path;
 // import java.nio.file.Paths;
 // import org.springframework.beans.factory.annotation.Value;
@@ -9,7 +8,6 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {

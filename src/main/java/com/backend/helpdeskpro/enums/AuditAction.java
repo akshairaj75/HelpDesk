@@ -13,5 +13,4 @@ public enum AuditAction {
     SLA_BREACHED,
     LOGIN,
     LOGOUT,
-
 }

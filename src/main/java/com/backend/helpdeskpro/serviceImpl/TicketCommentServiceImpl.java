@@ -23,7 +23,6 @@ import com.backend.helpdeskpro.security.CustomUserPrincipal;
 import com.backend.helpdeskpro.service.AuditService;
 import com.backend.helpdeskpro.service.NotificationService;
 import com.backend.helpdeskpro.service.TicketCommentService;
-import com.nimbusds.openid.connect.sdk.assurance.evidences.attachment.Attachment;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
