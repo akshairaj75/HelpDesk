@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,6 +43,19 @@ public class TicketController {
 
         TicketResponseDto res = ticketService.createTicket(authUser, dto, files, request);
         return ResponseEntity.ok(res);
+    }
+
+    @PostMapping("/create-bulk")
+    public ResponseEntity<List<TicketResponseDto>> createBulkTickets(
+            @AuthenticationPrincipal CustomUserPrincipal authUser,
+            @RequestBody List<TicketCreateDto> dtoList,
+            HttpServletRequest request) {
+
+        List<TicketResponseDto> response = dtoList.stream()
+                .map(dto -> ticketService.createTicket(authUser, dto, null, request))
+                .toList();
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/get-all-ticket")

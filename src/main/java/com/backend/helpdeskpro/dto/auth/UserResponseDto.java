@@ -1,5 +1,6 @@
 package com.backend.helpdeskpro.dto.auth;
 
+import com.backend.helpdeskpro.dto.department.DepartmentResponseDto;
 import com.backend.helpdeskpro.entity.User;
 import com.backend.helpdeskpro.enums.UserRole;
 
@@ -13,6 +14,17 @@ public class UserResponseDto {
     private String avatar_url;
     private String fcm_token;
     private Integer departmentId;
+    private String departmentName;
+    private DepartmentResponseDto department;
+
+    public DepartmentResponseDto getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(DepartmentResponseDto department) {
+        this.department = department;
+    }
+
     private boolean isActive;
 
     public Long getId() {
@@ -87,7 +99,16 @@ public class UserResponseDto {
         this.isActive = isActive;
     }
 
+    public String getDepartmentName() {
+        return departmentName;
+    }
+
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
+    }
+
     public static UserResponseDto fromEntity(User user) {
+
         UserResponseDto dto = new UserResponseDto();
         dto.setId(user.getId());
         dto.setFullName(user.getFullName());
@@ -98,11 +119,10 @@ public class UserResponseDto {
         dto.setFcm_token(user.getFcmToken());
         if (user.getDepartment() != null) {
             dto.setDepartmentId(user.getDepartment().getDepartmentId());
+            dto.setDepartmentName(user.getDepartment().getName());
         }
         dto.setActive(user.getActive());
         return dto;
     }
-
-
 
 }

@@ -165,12 +165,14 @@ public class TicketCommentServiceImpl implements TicketCommentService {
                                     "ticketNo", comment.getTicket().getTicketNo(),
                                     "fileName", savedAttachment.getFileName(),
                                     "fileUrl", savedAttachment.getFileUrl(),
-                                    "mimeType", savedAttachment.getMimeType() != null ? savedAttachment.getMimeType() : "",
-                                    "fileSizeKb", savedAttachment.getFileSizeKb() != null ? savedAttachment.getFileSizeKb() : 0),
+                                    "mimeType",
+                                    savedAttachment.getMimeType() != null ? savedAttachment.getMimeType() : "",
+                                    "fileSizeKb",
+                                    savedAttachment.getFileSizeKb() != null ? savedAttachment.getFileSizeKb() : 0),
                             request);
                 } catch (IOException e) {
                     e.printStackTrace();
-                }   
+                }
             }
 
         }
@@ -193,6 +195,8 @@ public class TicketCommentServiceImpl implements TicketCommentService {
                 authUser.getUser(),
                 AuditAction.ATTACHMENT_DELETED,
                 Map.of(
+                        "ticketId", attachment.getTicket().getId(),
+                        "ticketNo", attachment.getTicket().getTicketNo(),
                         "fileName", attachment.getFileName()),
                 request);
     }

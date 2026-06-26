@@ -1,10 +1,13 @@
 package com.backend.helpdeskpro.dto.auth;
 
+import com.backend.helpdeskpro.enums.UserRole;
+
 public class UserRegisterDto {
     public String firstName;
     public String lastName;
     private String fullName;
     private String email;
+    private UserRole role;
     private String password;
     private String phone;
 

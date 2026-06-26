@@ -1,5 +1,6 @@
 package com.backend.helpdeskpro.repository;
 
+import com.backend.helpdeskpro.entity.Department;
 import com.backend.helpdeskpro.entity.Ticket;
 import com.backend.helpdeskpro.entity.User;
 import com.backend.helpdeskpro.enums.TicketStatus;
@@ -24,4 +25,6 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     List<Ticket> findBySlaDueAtBeforeAndSlaBreachedFalseAndStatusNotIn(
             LocalDateTime now,
             List<TicketStatus> statuses);
+
+    List<Ticket> findByDepartment(Department department);
 }

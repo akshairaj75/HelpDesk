@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.helpdeskpro.dto.auth.AuthResponseDto;
@@ -73,12 +74,6 @@ public class AuthController {
 
     }
 
-    // @GetMapping("/fetch-all")
-    // public ResponseEntity<List<UserResponseDto>> getAllUsers() {
-    // List<UserResponseDto> users = userService.getUsers();
-    // return ResponseEntity.ok(users);
-    // }
-
     @GetMapping("/fetch-all")
     public ResponseEntity<List<UserResponseDto>> getAllUsers() {
         List<UserResponseDto> users = userService.getUsers();
@@ -88,7 +83,7 @@ public class AuthController {
     @GetMapping("/fetch-all-staff")
     public ResponseEntity<List<UserResponseDto>> getAllStaffUsers(
             @AuthenticationPrincipal CustomUserPrincipal authUser) {
-        List<UserResponseDto> users = userService.getStaffUsers(authUser);
+        List<UserResponseDto> users = userService.getAllStaff(authUser);
         return ResponseEntity.ok(users);
     }
 
@@ -99,6 +94,22 @@ public class AuthController {
             @PathVariable boolean isActive,
             HttpServletRequest request) {
         return ResponseEntity.ok(userService.updateStatus(userId, isActive, request, authUser));
+    }
+
+    @GetMapping("/fetch-agents")
+    public ResponseEntity<List<UserResponseDto>> getAllAgents(
+            @AuthenticationPrincipal CustomUserPrincipal authUser,
+            @RequestBody Long supervisorId) {
+        List<UserResponseDto> agents = userService.getAgents(authUser);
+        return ResponseEntity.ok(agents);
+    }
+
+    @GetMapping("/fetch-staffs/{agentId}")
+    public ResponseEntity<List<UserResponseDto>> getAllStaffs(
+            @AuthenticationPrincipal CustomUserPrincipal authUser,
+            @PathVariable Long agentId) {
+        List<UserResponseDto> agents = userService.getStaffUsers(authUser, agentId);
+        return ResponseEntity.ok(agents);
     }
 
 }

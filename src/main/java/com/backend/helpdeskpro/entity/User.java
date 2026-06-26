@@ -14,7 +14,8 @@ import java.util.List;
 @Table(name = "users", indexes = {
                 @Index(name = "idx_users_role", columnList = "role"),
                 @Index(name = "idx_users_dept", columnList = "department_id"),
-                @Index(name = "idx_users_active", columnList = "is_active")
+                @Index(name = "idx_users_active", columnList = "is_active"),
+                @Index(name = "idx_users_supervisor", columnList = "supervisor_id")
 }, uniqueConstraints = @UniqueConstraint(name = "uq_users_email", columnNames = "email"))
 public class User {
 
@@ -55,6 +56,13 @@ public class User {
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "department_id")
         private Department department;
+
+        @ManyToOne(fetch = FetchType.LAZY) // recently added for supervisor
+        @JoinColumn(name = "supervisor_id")
+        private User supervisor;
+
+        @OneToMany(mappedBy = "supervisor")
+        private List<User> subordinates = new ArrayList<>(); // recently added for team lead to get subordinates
 
         @Column(name = "is_active", nullable = false)
         private Boolean active = false;
@@ -172,6 +180,22 @@ public class User {
 
         public Department getDepartment() {
                 return department;
+        }
+
+        public User getSupervisor() {
+                return supervisor;
+        }
+
+        public void setSupervisor(User supervisor) {
+                this.supervisor = supervisor;
+        }
+
+        public List<User> getSubordinates() {
+                return subordinates;
+        }
+
+        public void setSubordinates(List<User> subordinates) {
+                this.subordinates = subordinates;
         }
 
         public String getProviderId() {

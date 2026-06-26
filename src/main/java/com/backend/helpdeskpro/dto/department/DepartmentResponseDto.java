@@ -1,5 +1,6 @@
 package com.backend.helpdeskpro.dto.department;
 
+import com.backend.helpdeskpro.dto.auth.UserResponseDto;
 import com.backend.helpdeskpro.entity.Department;
 
 public class DepartmentResponseDto {
@@ -8,6 +9,7 @@ public class DepartmentResponseDto {
     private String name;
     private String description;
     private Long managerId;
+    private String managerName;
     private Boolean isActive;
 
     public Integer getDepartmentId() {
@@ -34,6 +36,14 @@ public class DepartmentResponseDto {
         this.description = description;
     }
 
+    public String getManagerName() {
+        return managerName;
+    }
+
+    public void setManagerName(String managerName) {
+        this.managerName = managerName;
+    }
+
     public Boolean getIsActive() {
         return isActive;
     }
@@ -56,6 +66,7 @@ public class DepartmentResponseDto {
 
         dto.setDepartmentId(department.getDepartmentId());
         dto.setName(department.getName());
+        dto.setManagerName(department.getManager().getFullName());
         dto.setDescription(department.getDescription());
         dto.setIsActive(department.getActive());
         dto.setManagerId(department.getManager().getId());

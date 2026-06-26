@@ -16,11 +16,14 @@ public class TicketResponseDto {
     private Long ticketId;
     private String ticketNo;
     private Long reporterId;
+    private String reporterName;
     private Long assigneeId;
     private UserResponseDto assignee;
     // private Long categoryId;
     private CategoryResponseDto category;
     private Long departmentId;
+    private String departmentName;
+    private String slaPolicyName;
     private Long slaPolicyId;
     private String subject;
     private String description;
@@ -66,6 +69,14 @@ public class TicketResponseDto {
         this.reporterId = reporterId;
     }
 
+    public String getReporterName() {
+        return reporterName;
+    }
+
+    public void setReporterName(String reporterName) {
+        this.reporterName = reporterName;
+    }
+
     public Long getAssigneeId() {
         return assigneeId;
     }
@@ -98,6 +109,21 @@ public class TicketResponseDto {
         this.departmentId = departmentId;
     }
 
+    public String getDepartmentName() {
+        return departmentName;
+    }
+
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
+    }
+
+    public String getSlaPolicyName() {
+        return slaPolicyName;
+    }
+
+    public void setSlaPolicyName(String slaPolicyName) {
+        this.slaPolicyName = slaPolicyName;
+    }
     public Long getSlaPolicyId() {
         return slaPolicyId;
     }
@@ -190,15 +216,23 @@ public class TicketResponseDto {
         TicketResponseDto dto = new TicketResponseDto();
         dto.setTicketId(ticket.getId());
         dto.setTicketNo(ticket.getTicketNo());
-        dto.setReporterId(ticket.getReporter() != null ? ticket.getReporter().getId() : null);
+        if (ticket.getReporter() != null) {
+            dto.setReporterId(ticket.getReporter().getId());
+            dto.setReporterName(ticket.getReporter().getFullName());
+        }
         dto.setAssignee(ticket.getAssignee() != null ? UserResponseDto.fromEntity(ticket.getAssignee()) : null);
         dto.setAssigneeId(ticket.getAssignee() != null ? ticket.getAssignee().getId() : null);
         // dto.setCategoryId(ticket.getCategory() != null ? ticket.getCategory().getId().longValue() : null);
         dto.setCategory(ticket.getCategory() != null ? CategoryResponseDto.fromEntity(ticket.getCategory()) : null);
 
-        dto.setDepartmentId(
-                ticket.getDepartment() != null ? ticket.getDepartment().getDepartmentId().longValue() : null);
-        dto.setSlaPolicyId(ticket.getSlaPolicy() != null ? ticket.getSlaPolicy().getId().longValue() : null);
+        if (ticket.getDepartment() != null) {
+            dto.setDepartmentId(ticket.getDepartment().getDepartmentId().longValue());
+            dto.setDepartmentName(ticket.getDepartment().getName());
+        }
+        if (ticket.getSlaPolicy() != null) {
+            dto.setSlaPolicyId(ticket.getSlaPolicy().getId().longValue());
+            dto.setSlaPolicyName(ticket.getSlaPolicy().getName());
+        }
         dto.setSubject(ticket.getSubject());
         dto.setAttachments(ticket.getAttachments() != null ? ticket.getAttachments().stream()
                 .map(TicketAttachmentDto::fromEntity)

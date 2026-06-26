@@ -15,10 +15,18 @@ public interface UserService {
     AuthResponseDto registerUser(UserRegisterDto dto);
 
     List<UserResponseDto> getUsers();
-        List<UserResponseDto> getStaffUsers(CustomUserPrincipal authUser);
+        List<UserResponseDto> getStaffUsers(CustomUserPrincipal authUser, Long agentId);
 
     AuthResponseDto login(UserLoginDto dto);
 
     UserResponseDto updateStatus(Long userId, boolean isActive, HttpServletRequest request, CustomUserPrincipal authUser);
+
+    List<UserResponseDto> getAgents(CustomUserPrincipal authUser);
+
+    UserResponseDto assignStaff(CustomUserPrincipal authUser, Long agentId, Long staffId, HttpServletRequest request);
+
+    List<UserResponseDto> getAllStaff(CustomUserPrincipal authUser);
+
+    UserResponseDto createSubordinate(CustomUserPrincipal authUser, UserRegisterDto dto, HttpServletRequest request);
 
 }

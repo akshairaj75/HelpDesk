@@ -175,11 +175,20 @@ public class TicketServiceImpl implements TicketService {
                         return tickets.stream()
                                         .map(TicketResponseDto::fromEntity)
                                         .toList();
+                } else if (authUser.getUser().getRole() == UserRole.AGENT) {
+                        // List<Ticket> tickets = ticketRepository.findByDepartment(authUser.getUser().getDepartment());
+                        List<Ticket> tickets = ticketRepository.findByAssignee(authUser.getUser());
+                        // List<Ticket> tickets = ticketRepository.findByAssignee(authUser.getUser());
+                        return tickets.stream()
+                                        .map(TicketResponseDto::fromEntity)
+                                        .toList();
+                } else if (authUser.getUser().getRole() == UserRole.TEAM_LEAD || authUser.getUser().getRole() == UserRole.ADMIN) {
+                        List<Ticket> tickets = ticketRepository.findAll();
+                        return tickets.stream()
+                                        .map(TicketResponseDto::fromEntity)
+                                        .toList();
                 }
-                List<Ticket> tickets = ticketRepository.findAll();
-                return tickets.stream()
-                                .map(TicketResponseDto::fromEntity)
-                                .toList();
+                throw new RuntimeException("You don't have permission to access this resource");
 
         }
 

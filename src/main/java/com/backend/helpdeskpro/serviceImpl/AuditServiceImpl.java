@@ -147,14 +147,57 @@ public class AuditServiceImpl implements AuditService {
                                 + " exceeded SLA");
             }
 
-            case ASSIGNED -> {
-                dto.setTitle("Assigned");
-                dto.setColor("primary");
-                dto.setMessage(
-                        readPayloadValue(payload, "ticketNo")
-                                + " assigned to "
-                                + readPayloadValue(payload, "assignedTo"));
-            }
+            // case ASSIGNED -> {
+            //     String entityType = log.getEntityType();
+
+            //     if ("TICKET".equals(entityType)) {
+            //         dto.setTitle("Ticket Assigned");
+            //         dto.setColor("primary");
+
+            //         dto.setMessage(
+            //                 readPayloadValue(payload, "ticketNo")
+            //                         + " assigned to "
+            //                         + readPayloadValue(payload, "assignedTo"));
+            //     }
+                case ASSIGNED -> {
+                    dto.setTitle(log.getEntityType() + " Assigned");
+                    dto.setColor("primary");
+
+                    dto.setMessage(
+                            readPayloadValue(payload, "entityName")
+                                    + " assigned to "
+                                    + readPayloadValue(payload, "assignedTo"));
+                }
+
+            //     else if ("DEPARTMENT".equals(entityType)) {
+            //         dto.setTitle("Department Assigned");
+            //         dto.setColor("primary");
+
+            //         dto.setMessage(
+            //                 readPayloadValue(payload, "departmentName")
+            //                         + " assigned to "
+            //                         + readPayloadValue(payload, "assignedTo"));
+            //     }
+
+            //     else if ("USER".equals(entityType)) {
+            //         dto.setTitle("User Assigned");
+            //         dto.setColor("primary");
+
+            //         dto.setMessage(
+            //                 readPayloadValue(payload, "userName")
+            //                         + " assigned to "
+            //                         + readPayloadValue(payload, "assignedTo"));
+            //     }
+
+            //     else {
+            //         dto.setTitle("Assigned");
+            //         dto.setColor("primary");
+
+            //         dto.setMessage(
+            //                 entityType + " assigned to "
+            //                         + readPayloadValue(payload, "assignedTo"));
+            //     }
+            // }
 
             case STATUS_CHANGED -> {
                 String newStatus = readPayloadValue(payload, "newStatus");

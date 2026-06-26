@@ -18,6 +18,8 @@ import com.backend.helpdeskpro.dto.department.DepartmentResponseDto;
 import com.backend.helpdeskpro.security.CustomUserPrincipal;
 import com.backend.helpdeskpro.service.DepartmentService;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @RestController
 @RequestMapping("/api/helpdesk/department")
 public class DepartmentController {
@@ -28,9 +30,10 @@ public class DepartmentController {
     @PostMapping("/add-department")
     public ResponseEntity<DepartmentResponseDto> createDepartment(
         @AuthenticationPrincipal CustomUserPrincipal authUser,
-        @RequestBody DepartmentCreateDto dto
+        @RequestBody DepartmentCreateDto dto,
+        HttpServletRequest request
     ){
-        DepartmentResponseDto resp = departmentService.createDepartment(authUser, dto);
+        DepartmentResponseDto resp = departmentService.createDepartment(authUser, dto, request);
         return ResponseEntity.ok(resp);
     }
 
