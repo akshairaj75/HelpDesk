@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.backend.helpdeskpro.dto.tickets.ticketDto.TicketCreateDto;
 import com.backend.helpdeskpro.dto.tickets.ticketDto.TicketResponseDto;
+import com.backend.helpdeskpro.dto.tickets.ticketDto.TicketsBreachedDto;
 import com.backend.helpdeskpro.entity.Category;
 import com.backend.helpdeskpro.entity.Department;
 import com.backend.helpdeskpro.entity.SlaPolicy;
@@ -176,13 +177,20 @@ public class TicketServiceImpl implements TicketService {
                                         .map(TicketResponseDto::fromEntity)
                                         .toList();
                 } else if (authUser.getUser().getRole() == UserRole.AGENT) {
-                        // List<Ticket> tickets = ticketRepository.findByDepartment(authUser.getUser().getDepartment());
-                        List<Ticket> tickets = ticketRepository.findByAssignee(authUser.getUser());
+                        // List<Ticket> tickets =
+                        // ticketRepository.findByDepartment(authUser.getUser().getDepartment());
+                        // List<Ticket> tickets = ticketRepository.findByAssignee(authUser.getUser());
+
+                        List<Ticket> tickets = ticketRepository.findByAssigneeOrAssigneeSupervisor(
+                                        authUser.getUser(),
+                                        authUser.getUser());
+
                         // List<Ticket> tickets = ticketRepository.findByAssignee(authUser.getUser());
                         return tickets.stream()
                                         .map(TicketResponseDto::fromEntity)
                                         .toList();
-                } else if (authUser.getUser().getRole() == UserRole.TEAM_LEAD || authUser.getUser().getRole() == UserRole.ADMIN) {
+                } else if (authUser.getUser().getRole() == UserRole.TEAM_LEAD
+                                || authUser.getUser().getRole() == UserRole.ADMIN) {
                         List<Ticket> tickets = ticketRepository.findAll();
                         return tickets.stream()
                                         .map(TicketResponseDto::fromEntity)
@@ -306,4 +314,103 @@ public class TicketServiceImpl implements TicketService {
 
         }
 
+        // public List<TicketResponseDto> getBreachedTickets(CustomUserPrincipal
+        // authUser) {
+        // return ticketRepository
+        // .findBySlaBreachedTrueAndStatusNotIn(
+        // List.of(TicketStatus.RESOLVED, TicketStatus.CLOSED))
+        // .stream()
+        // .map(TicketResponseDto::fromEntity)
+        // .toList();
+        // }
+
+        public List<TicketsBreachedDto> getBreachedTickets(CustomUserPrincipal authUser) {
+
+                Integer count = 0;
+                List<TicketStatus> excludedStatuses = List.of(
+                                TicketStatus.RESOLVED,
+                                TicketStatus.CLOSED,
+                                TicketStatus.CANCELLED);
+
+                User user = authUser.getUser();
+
+                List<Ticket> tickets;
+
+                if (user.getRole() == UserRole.ADMIN || user.getRole() == UserRole.TEAM_LEAD) {
+
+                        tickets = ticketRepository
+                                        .findBySlaBreachedTrueAndStatusNotIn(excludedStatuses);
+
+                } else if (user.getRole() == UserRole.AGENT) {
+
+                        tickets = ticketRepository
+                                        .findBySlaBreachedTrueAndStatusNotInAndAssigneeIdOrSlaBreachedTrueAndStatusNotInAndAssigneeSupervisorId(
+                                                        excludedStatuses,
+                                                        user.getId(),
+                                                        excludedStatuses,
+                                                        user.getId());
+
+                } else if (user.getRole() == UserRole.STAFF) {
+
+                        tickets = ticketRepository
+                                        .findBySlaBreachedTrueAndStatusNotInAndAssigneeId(
+                                                        excludedStatuses,
+                                                        user.getId());
+
+                } else {
+                        tickets = List.of();
+                }
+
+                for (Ticket ticket : tickets) {
+                        count++;
+                }
+
+                return tickets.stream()
+                                .map(TicketsBreachedDto::fromEntity)
+                                .toList();
+
+        }
+
+        @Override
+        public List<TicketResponseDto> getMyQueueTickets(CustomUserPrincipal authUser) {
+
+                List<TicketStatus> excludedStatuses = List.of(
+                                TicketStatus.RESOLVED,
+                                TicketStatus.CLOSED,
+                                TicketStatus.CANCELLED);
+
+                User user = authUser.getUser();
+
+                List<Ticket> tickets;
+
+                if (user.getRole() == UserRole.ADMIN || user.getRole() == UserRole.TEAM_LEAD) {
+
+                        tickets = ticketRepository
+                                        .findBySlaBreachedTrueAndStatusNotIn(excludedStatuses);
+
+                } else if (user.getRole() == UserRole.AGENT) {
+
+                        tickets = ticketRepository
+                                        .findBySlaBreachedTrueAndStatusNotInAndAssigneeIdOrSlaBreachedTrueAndStatusNotInAndAssigneeSupervisorId(
+                                                        excludedStatuses,
+                                                        user.getId(),
+                                                        excludedStatuses,
+                                                        user.getId());
+
+                } else if (user.getRole() == UserRole.STAFF) {
+
+                        tickets = ticketRepository
+                                        .findBySlaBreachedTrueAndStatusNotInAndAssigneeId(
+                                                        excludedStatuses,
+                                                        user.getId());
+
+                } else {
+                        tickets = List.of();
+                }
+
+                return tickets.stream()
+                                .map(TicketResponseDto::fromEntity)
+                                .toList();
+
+        }
 }

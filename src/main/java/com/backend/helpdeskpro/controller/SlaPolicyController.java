@@ -15,12 +15,16 @@ import com.backend.helpdeskpro.dto.sla.SlaPolicyCreateDto;
 import com.backend.helpdeskpro.dto.sla.SlaPolicyResponseDto;
 import com.backend.helpdeskpro.security.CustomUserPrincipal;
 import com.backend.helpdeskpro.service.SlaPolicyService;
+import com.backend.helpdeskpro.service.TicketService;
 
 @RestController
 @RequestMapping("/api/helpdesk/sla-policy")
 public class SlaPolicyController {
     @Autowired
     SlaPolicyService slaPolicyService;
+
+    @Autowired
+    TicketService ticketService;
 
     @PostMapping("/add-sla")
     public ResponseEntity<SlaPolicyResponseDto> createSlaPolicy(
@@ -45,7 +49,5 @@ public class SlaPolicyController {
                 .toList();
         return ResponseEntity.ok(resp);
     }
-    
-    
 
 }

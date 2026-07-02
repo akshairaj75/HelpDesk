@@ -3,6 +3,8 @@ package com.backend.helpdeskpro.dto.tickets.ticketDto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.backend.helpdeskpro.dto.auth.UserResponseDto;
 import com.backend.helpdeskpro.dto.category.CategoryResponseDto;
 import com.backend.helpdeskpro.dto.tickets.ticketAttachment.TicketAttachmentDto;
@@ -10,6 +12,7 @@ import com.backend.helpdeskpro.entity.Ticket;
 import com.backend.helpdeskpro.enums.PriorityLevel;
 import com.backend.helpdeskpro.enums.TicketChannel;
 import com.backend.helpdeskpro.enums.TicketStatus;
+import com.backend.helpdeskpro.repository.TicketAttachmentRepository;
 
 public class TicketResponseDto {
 
@@ -124,6 +127,7 @@ public class TicketResponseDto {
     public void setSlaPolicyName(String slaPolicyName) {
         this.slaPolicyName = slaPolicyName;
     }
+
     public Long getSlaPolicyId() {
         return slaPolicyId;
     }
@@ -213,6 +217,9 @@ public class TicketResponseDto {
     }
 
     public static TicketResponseDto fromEntity(Ticket ticket) {
+
+        TicketAttachmentRepository ticketAttachmentRepository;
+
         TicketResponseDto dto = new TicketResponseDto();
         dto.setTicketId(ticket.getId());
         dto.setTicketNo(ticket.getTicketNo());
@@ -222,7 +229,8 @@ public class TicketResponseDto {
         }
         dto.setAssignee(ticket.getAssignee() != null ? UserResponseDto.fromEntity(ticket.getAssignee()) : null);
         dto.setAssigneeId(ticket.getAssignee() != null ? ticket.getAssignee().getId() : null);
-        // dto.setCategoryId(ticket.getCategory() != null ? ticket.getCategory().getId().longValue() : null);
+        // dto.setCategoryId(ticket.getCategory() != null ?
+        // ticket.getCategory().getId().longValue() : null);
         dto.setCategory(ticket.getCategory() != null ? CategoryResponseDto.fromEntity(ticket.getCategory()) : null);
 
         if (ticket.getDepartment() != null) {
@@ -234,9 +242,14 @@ public class TicketResponseDto {
             dto.setSlaPolicyName(ticket.getSlaPolicy().getName());
         }
         dto.setSubject(ticket.getSubject());
-        dto.setAttachments(ticket.getAttachments() != null ? ticket.getAttachments().stream()
-                .map(TicketAttachmentDto::fromEntity)
-                .toList() : null);
+
+        dto.setAttachments(ticket.getAttachments() != null
+                ? ticket.getAttachments()
+                        .stream()
+                        .filter(attachment -> attachment.getComment() == null)
+                        .map(TicketAttachmentDto::fromEntity)
+                        .toList()
+                : null);
 
         dto.setDescription(ticket.getDescription());
         dto.setStatus(ticket.getStatus());

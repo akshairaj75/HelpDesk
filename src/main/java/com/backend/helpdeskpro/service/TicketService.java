@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.backend.helpdeskpro.dto.tickets.ticketDto.TicketCreateDto;
 import com.backend.helpdeskpro.dto.tickets.ticketDto.TicketResponseDto;
+import com.backend.helpdeskpro.dto.tickets.ticketDto.TicketsBreachedDto;
 import com.backend.helpdeskpro.security.CustomUserPrincipal;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,5 +25,10 @@ public interface TicketService {
 
     TicketResponseDto assignTicket(CustomUserPrincipal authUser, Long ticketId, Long assigneeId,
             HttpServletRequest request);
+
+    List<TicketsBreachedDto> getBreachedTickets(CustomUserPrincipal authUser);
+
+    List<TicketResponseDto> getMyQueueTickets(CustomUserPrincipal authUser);
+
 
 }

@@ -39,6 +39,7 @@ public class KbArticleServiceImpl implements KbArticleService {
                     KbArticleResponseDto dto = new KbArticleResponseDto();
                     dto.setTitle(kbArticle.getTitle());
                     dto.setContent(kbArticle.getContent());
+                    dto.setArticleId(kbArticle.getId());
                     dto.setAuthor(kbArticle.getAuthor().getFullName());
                     dto.setCategoryId(kbArticle.getCategory().getId());
                     return dto;
@@ -76,6 +77,13 @@ public class KbArticleServiceImpl implements KbArticleService {
 
         return KbArticleResponseDto.fromEntity(kbArticle);
 
+    }
+
+    @Override
+    public KbArticleResponseDto loadKbArticle(Integer id) {
+        KbArticle kbArticle = kbArticleRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("KB Article not found"));
+        return KbArticleResponseDto.fromEntity(kbArticle);
     }
 
 }

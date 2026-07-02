@@ -4,6 +4,7 @@ import com.backend.helpdeskpro.dto.auth.AuthResponseDto;
 import com.backend.helpdeskpro.dto.auth.UserLoginDto;
 import com.backend.helpdeskpro.dto.auth.UserRegisterDto;
 import com.backend.helpdeskpro.dto.auth.UserResponseDto;
+import com.backend.helpdeskpro.dto.auth.UserUpdateDto;
 import com.backend.helpdeskpro.entity.User;
 import com.backend.helpdeskpro.enums.AuditAction;
 import com.backend.helpdeskpro.enums.AuthProvider;
@@ -119,29 +120,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserResponseDto> getStaffUsers(CustomUserPrincipal authUser, Long agentId) {
+    public List<UserResponseDto> getAllStaff(CustomUserPrincipal authUser) {
         if (authUser.getUser().getRole() == UserRole.AGENT) {
-            List<User> users = userRepository.findByRoleAndSupervisor(UserRole.STAFF, authUser.getUser());
-            return users.stream()
+            List<User> res = userRepository.findBySupervisor_Id(authUser.getUserId());
+            return res.stream()
                     .map(UserRegisterDto::fromEntity)
                     .toList();
-
         } else if (authUser.getUser().getRole() == UserRole.TEAM_LEAD
                 || authUser.getUser().getRole() == UserRole.ADMIN) {
 
-            User supervisor = userRepository.findById(agentId)
-                    .orElseThrow(() -> new RuntimeException("No registered agent found"));
+            List<User> res = userRepository.findByRole(UserRole.AGENT);
 
-            // List<User> users = userRepository.findByRoleAndSupervisor(UserRole.AGENT,
-            // supervisor);
-            List<User> users = userRepository.findByRole(UserRole.STAFF);
-
-            return users.stream()
+            return res.stream()
                     .map(UserRegisterDto::fromEntity)
                     .toList();
         }
         throw new RuntimeException("You are not allowed to perform this action");
-
     }
 
     @Override
@@ -192,22 +186,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserResponseDto> getAllStaff(CustomUserPrincipal authUser) {
-        if (authUser.getUser().getRole() == UserRole.AGENT) {
-            List<User> res = userRepository.findBySupervisor_Id(authUser.getUserId());
-            return res.stream()
-                    .map(UserRegisterDto::fromEntity)
-                    .toList();
-        } else if (authUser.getUser().getRole() == UserRole.TEAM_LEAD || authUser.getUser().getRole() == UserRole.ADMIN) {
-            List<User> res = userRepository.findByRole(UserRole.AGENT);
-            return res.stream()
-                    .map(UserRegisterDto::fromEntity)
-                    .toList();
-        }
-        throw new RuntimeException("You are not allowed to perform this action");
-    }
-
-    @Override
     public UserResponseDto createSubordinate(CustomUserPrincipal authUser, UserRegisterDto dto,
             HttpServletRequest request) {
         User loggedUser = authUser.getUser();
@@ -239,9 +217,7 @@ public class UserServiceImpl implements UserService {
                             "supervisorId", loggedUser.getId()),
                     request);
 
-            String token = jwtService.generateToken(user);
-
-            return UserResponseDto.fromEntity(loggedUser);
+            return UserResponseDto.fromEntity(savedUser);
         } else if (loggedUser.getRole() == UserRole.AGENT) {
             // create
 
@@ -270,10 +246,19 @@ public class UserServiceImpl implements UserService {
                             "supervisorId", loggedUser.getId()),
                     request);
 
-
             return UserResponseDto.fromEntity(savedUser);
         }
         return null;
+    }
+
+    @Override
+    public UserResponseDto updateProfile(UserUpdateDto dto, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("No registered agent found"));
+        user.setFullName(dto.getFullName());
+        user.setPhone(dto.getPhone());
+        User savedUser = userRepository.save(user);
+        return UserResponseDto.fromEntity(savedUser);
     }
 
 }

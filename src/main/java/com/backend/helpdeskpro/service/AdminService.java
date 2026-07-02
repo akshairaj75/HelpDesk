@@ -18,4 +18,7 @@ public interface AdminService {
     List<UserResponseDto> getAllAgents(CustomUserPrincipal authUser);
 
 
+    List<UserResponseDto> getStaffsByAgent(CustomUserPrincipal authUser, Long agentId);
+
+
 }

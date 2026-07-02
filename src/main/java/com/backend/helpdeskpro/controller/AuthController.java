@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.helpdeskpro.dto.auth.AuthResponseDto;
 import com.backend.helpdeskpro.dto.auth.UserLoginDto;
 import com.backend.helpdeskpro.dto.auth.UserRegisterDto;
 import com.backend.helpdeskpro.dto.auth.UserResponseDto;
+import com.backend.helpdeskpro.dto.auth.UserUpdateDto;
 import com.backend.helpdeskpro.entity.User;
 import com.backend.helpdeskpro.repository.UserRepository;
 import com.backend.helpdeskpro.security.CustomUserPrincipal;
@@ -74,18 +74,13 @@ public class AuthController {
 
     }
 
-    @GetMapping("/fetch-all")
-    public ResponseEntity<List<UserResponseDto>> getAllUsers() {
-        List<UserResponseDto> users = userService.getUsers();
-        return ResponseEntity.ok(users);
-    }
-
     @GetMapping("/fetch-all-staff")
     public ResponseEntity<List<UserResponseDto>> getAllStaffUsers(
             @AuthenticationPrincipal CustomUserPrincipal authUser) {
         List<UserResponseDto> users = userService.getAllStaff(authUser);
         return ResponseEntity.ok(users);
     }
+
 
     @PutMapping("/{userId}/activation/{isActive}")
     public ResponseEntity<UserResponseDto> updateStatus(
@@ -104,12 +99,19 @@ public class AuthController {
         return ResponseEntity.ok(agents);
     }
 
-    @GetMapping("/fetch-staffs/{agentId}")
-    public ResponseEntity<List<UserResponseDto>> getAllStaffs(
+    @GetMapping("/profile/me")
+    public ResponseEntity<UserResponseDto> getCurrentUserProfile(
+            @AuthenticationPrincipal CustomUserPrincipal authUser) {
+        User user = userRepository.findById(authUser.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return ResponseEntity.ok(UserResponseDto.fromEntity(user));
+    }
+
+    @PutMapping("/profile/update")
+    public ResponseEntity<UserResponseDto> updateProfile(
             @AuthenticationPrincipal CustomUserPrincipal authUser,
-            @PathVariable Long agentId) {
-        List<UserResponseDto> agents = userService.getStaffUsers(authUser, agentId);
-        return ResponseEntity.ok(agents);
+            @RequestBody UserUpdateDto dto) {
+        return ResponseEntity.ok(userService.updateProfile(dto, authUser.getUserId()));
     }
 
 }

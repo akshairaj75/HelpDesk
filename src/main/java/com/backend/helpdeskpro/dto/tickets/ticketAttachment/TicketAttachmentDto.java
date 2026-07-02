@@ -1,5 +1,7 @@
 package com.backend.helpdeskpro.dto.tickets.ticketAttachment;
 
+import java.util.List;
+
 import com.backend.helpdeskpro.entity.TicketAttachment;
 
 public class TicketAttachmentDto {

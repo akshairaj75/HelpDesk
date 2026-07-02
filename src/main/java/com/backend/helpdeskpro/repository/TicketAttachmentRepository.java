@@ -13,4 +13,6 @@ public interface TicketAttachmentRepository extends JpaRepository<TicketAttachme
 
     List<TicketAttachment> findByComment(TicketComment comment);
 
+    List<TicketAttachment> findByTicketIdAndCommentIsNull(Long id);
+
 }

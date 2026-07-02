@@ -15,5 +15,7 @@ public interface KbArticleService {
     KbArticleResponseDto createKbArticle(CustomUserPrincipal authUser, KbArticleCreateDto dto,
             HttpServletRequest request);
 
+    KbArticleResponseDto loadKbArticle(Integer id);
+
 
 }

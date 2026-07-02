@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.backend.helpdeskpro.dto.tickets.ticketAttachment.TicketAttachmentDto;
 import com.backend.helpdeskpro.dto.tickets.ticketDto.TicketCreateDto;
 import com.backend.helpdeskpro.dto.tickets.ticketDto.TicketResponseDto;
+import com.backend.helpdeskpro.dto.tickets.ticketDto.TicketsBreachedDto;
 import com.backend.helpdeskpro.security.CustomUserPrincipal;
 import com.backend.helpdeskpro.service.TicketService;
 import com.backend.helpdeskpro.service.UserService;
@@ -109,6 +110,20 @@ public class TicketController {
             HttpServletRequest request) {
         TicketResponseDto ticket = ticketService.assignTicket(authUser, ticketId, assigneeId, request);
         return ResponseEntity.ok(ticket);
+    }
+
+    @GetMapping("/breached")
+    public ResponseEntity<List<TicketsBreachedDto>> getBreachedTickets(
+            @AuthenticationPrincipal CustomUserPrincipal authUser) {
+        List<TicketsBreachedDto> tickets = ticketService.getBreachedTickets(authUser);
+        return ResponseEntity.ok(tickets);
+    }
+
+    @GetMapping("/my-queue")
+    public ResponseEntity<List<TicketResponseDto>> getMyQueueTickets(
+            @AuthenticationPrincipal CustomUserPrincipal authUser) {
+        List<TicketResponseDto> tickets = ticketService.getMyQueueTickets(authUser);
+        return ResponseEntity.ok(tickets);
     }
 
 }

@@ -27,4 +27,19 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
             List<TicketStatus> statuses);
 
     List<Ticket> findByDepartment(Department department);
+
+    List<Ticket> findByAssigneeOrAssigneeSupervisor(User assignee, User supervisor);
+
+    List<Ticket> findBySlaBreachedTrueAndStatusNotIn(List<TicketStatus> excluded);
+
+    List<Ticket> findBySlaBreachedTrueAndStatusNotInAndAssigneeId(
+            List<TicketStatus> statuses,
+            Long assigneeId);
+
+    List<Ticket> findBySlaBreachedTrueAndStatusNotInAndAssigneeIdOrSlaBreachedTrueAndStatusNotInAndAssigneeSupervisorId(
+            List<TicketStatus> statuses1,
+            Long assigneeId,
+            List<TicketStatus> statuses2,
+            Long supervisorId);
+
 }

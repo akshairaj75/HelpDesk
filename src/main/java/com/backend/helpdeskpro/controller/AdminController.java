@@ -112,6 +112,14 @@ public class AdminController {
         return ResponseEntity.ok(agents);
     }
 
+        @GetMapping("/fetch-all-staff-by-agent/{agentId}")
+    public ResponseEntity<List<UserResponseDto>> getStaffsByAgent(
+            @AuthenticationPrincipal CustomUserPrincipal authUser,
+            @PathVariable Long agentId) {
+        List<UserResponseDto> agents = adminService.getStaffsByAgent(authUser, agentId);
+        return ResponseEntity.ok(agents);
+    }
+
     @PostMapping("/create-subordinate")
     public ResponseEntity<UserResponseDto> createSubordinate(
             @AuthenticationPrincipal CustomUserPrincipal authUser,

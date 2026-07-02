@@ -4,6 +4,8 @@ import com.backend.helpdeskpro.entity.KbArticle;
 
 public class KbArticleResponseDto {
 
+    private Integer articleId;
+
     private String title;
     private String content;
     private Integer categoryId;
@@ -49,8 +51,15 @@ public class KbArticleResponseDto {
         this.author = author;
     }
 
+    public Integer getArticleId() {
+        return articleId;
+    }
+    public void setArticleId(Integer articleId) {
+        this.articleId = articleId;
+    }
     public static KbArticleResponseDto fromEntity(KbArticle kbArticle) {
         KbArticleResponseDto response = new KbArticleResponseDto();
+        response.setArticleId(kbArticle.getId());
         response.setTitle(kbArticle.getTitle());
         response.setContent(kbArticle.getContent());
         response.setCategoryId(kbArticle.getCategory().getId());

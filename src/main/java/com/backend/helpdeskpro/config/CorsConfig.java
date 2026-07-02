@@ -22,7 +22,9 @@ public class CorsConfig {
                 "http://localhost:4200",
                 "http://192.168.0.94:4200",
                 "http://192.168.0.92:4200",
-                "http://192.168.0.91:4200"
+                "http://192.168.0.91:4200",
+                "http://192.168.1.166:4200",
+                "http://192.168.1.201:4200"
 
         ));
         config.setAllowedHeaders(List.of("*"));
